@@ -109,7 +109,7 @@ export default function HomePage() {
             <div className="relative">
               <div className="relative aspect-square overflow-hidden rounded-2xl border bg-muted/50">
                 <img
-                  src="/tech-article.jpg"
+                  src="/hinditechguide.png"
                   alt="Technology Guide Illustration"
                   className="h-full w-full object-cover"
                 />

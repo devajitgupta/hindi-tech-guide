@@ -62,7 +62,7 @@ export function ArticleSchema({
     "@type": "Article",
     headline,
     description,
-    image: image || "/tech-article.jpg",
+    image: image || "/hinditechguide.png",
     datePublished,
     dateModified: dateModified || datePublished,
     author: {
