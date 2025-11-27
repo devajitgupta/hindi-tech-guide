@@ -7,45 +7,39 @@ import { ArticleSchema, BreadcrumbSchema } from "@/components/seo/json-ld"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
-const BLOG_ID = process.env.BLOG_ID;
-const API_KEY = process.env.BLOGGER_API_KEY;
+import { cleanHtml, getAllSlugs, getPostBySlug } from "@/lib/blogger"
+
+// Optional: sanitize HTML and remove inline styles
+
 
 interface PageProps {
   params: { slug: string } | Promise<{ slug: string }>
 }
 
 export async function generateStaticParams() {
-  const res = await fetch(
-    `https://www.googleapis.com/blogger/v3/blogs/${BLOG_ID}/posts?key=${API_KEY}&maxResults=20`
-  )
-  const data = await res.json()
-  const posts = data.items || []
-
-  return posts.map((post: any) => {
-    const slug = post.url.split("/").pop()?.replace(".html", "")
-    return { slug }
-  })
+  return await getAllSlugs()
+}
+export function calculateReadingTime(text: string) {
+  const words = text.trim().split(/\s+/).length
+  const minutes = Math.ceil(words / 200)
+  return `${minutes} min read`
 }
 
 export default async function BlogPostPage({ params }: PageProps) {
-  const { slug } = await params;
-  const res = await fetch(
-    `https://www.googleapis.com/blogger/v3/blogs/${BLOG_ID}/posts?key=${API_KEY}&maxResults=20`
-  )
-  const data = await res.json()
-  const posts = data.items || []
 
-  const post = posts.find(
-    (p: any) => p.url.split("/").pop()?.replace(".html", "") === slug
-  )
+  const { slug } = await params;
+  const post = await getPostBySlug(slug)
+  console.log("Fetched post:", post.content);
 
   if (!post) notFound()
 
   const description = post.content.replace(/<[^>]+>/g, "").slice(0, 150) + "..."
   const category = post.labels?.[0] || "General"
   const tags = post.labels?.slice(1) || []
-  const readTime = Math.ceil(description.split(" ").length / 200) + " min read"
+  const readTime = calculateReadingTime(post.content)
   const image = post.images?.[0]?.url || post.author.image.url
+    const cleanContent = await cleanHtml(post.content);
+
 
   return (
     <>
@@ -73,7 +67,6 @@ export default async function BlogPostPage({ params }: PageProps) {
             वापस ब्लॉग पर
           </Button>
         </Link>
-
         <header className="mb-8">
           <Badge variant="secondary" className="mb-4">{category}</Badge>
           <h1 className="mb-4 text-4xl font-bold tracking-tight text-balance sm:text-5xl">{post.title}</h1>
@@ -82,7 +75,12 @@ export default async function BlogPostPage({ params }: PageProps) {
           <div className="mt-6 flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
             <div className="flex items-center gap-2">
               <User className="h-4 w-4" />
-              <span>{post.author.displayName}</span>
+              <Link
+                href="/author"
+                className="hover:underline text-blue-600 dark:text-blue-400"
+              >
+                {post.author.displayName}
+              </Link>
             </div>
             <Separator orientation="vertical" className="h-4" />
             <div className="flex items-center gap-2">
@@ -105,14 +103,7 @@ export default async function BlogPostPage({ params }: PageProps) {
             ))}
           </div>
         </header>
-
-        <div className="relative mb-8 aspect-video overflow-hidden rounded-lg">
-          <Image src={image || "/placeholder.svg"} alt={post.title} fill className="object-cover" priority />
-        </div>
-
-        <div className="prose prose-lg max-w-none dark:prose-invert">
-          <div dangerouslySetInnerHTML={{ __html: post.content }} />
-        </div>
+        <div className="prose prose-lg max-w-none dark:prose-invert" dangerouslySetInnerHTML={{ __html: cleanContent }} />
       </article>
     </>
   )
