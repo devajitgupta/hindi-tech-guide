@@ -1,7 +1,7 @@
 // app/blog/[slug]/page.tsx
 import { notFound } from "next/navigation"
-import Image from "next/image"
 import Link from "next/link"
+import Image from "next/image"
 import { Calendar, Clock, User, ArrowLeft, Tag } from "lucide-react"
 import { ArticleSchema, BreadcrumbSchema } from "@/components/seo/json-ld"
 import { Badge } from "@/components/ui/badge"
@@ -24,21 +24,48 @@ export function calculateReadingTime(text: string) {
   return `${minutes} min read`
 }
 
-// Function to sanitize and enhance the HTML content from Blogger
 function processContentHTML(html: string): string {
-  // Remove comments
   let processed = html.replace(/<!--[\s\S]*?-->/g, '')
-  
-  // Remove inline font-size styles that might interfere
   processed = processed.replace(/style="[^"]*font-size:\s*[^;"]*;?[^"]*"/gi, (match) => {
     return match.replace(/font-size:\s*[^;"]*/gi, '')
   })
-  
-  // Clean up empty style attributes
   processed = processed.replace(/style="\s*"/gi, '')
-  
+
+  processed = processed.replace(/\s{2,}/g, ' ')
+  processed = processed.replace(/^\s+|\s+$/gm, '')
+  processed = processed.replace(/\n{2,}/g, '\n')
+
   return processed
 }
+
+function extractImage(html: string): string | null {
+  const match = html.match(/<img[^>]+src="([^">]+)"/)
+  return match ? match[1] : null
+}
+
+export async function generateMetadata({ params }: PageProps) {
+  const { slug } = await params
+  const post = await getPostBySlug(slug)
+  if (!post) return {}
+
+  const desc = post.content.replace(/<[^>]+>/g, "").slice(0, 150)
+  const image = post.images?.[0]?.url || "/default-og.jpg"
+
+  return {
+    title: `${post.title} | HindiTechGuide`,
+    description: desc,
+    openGraph: {
+      title: post.title,
+      description: desc,
+      images: [image]
+    },
+    twitter: {
+      card: "summary_large_image",
+      images: [image]
+    }
+  }
+}
+
 
 export default async function BlogPostPage({ params }: PageProps) {
   const { slug } = await params
@@ -50,12 +77,16 @@ export default async function BlogPostPage({ params }: PageProps) {
   const category = post.labels?.[0] || "General"
   const tags = post.labels?.slice(1) || []
   const readTime = calculateReadingTime(post.content)
-  const image = post.images?.[0]?.url || post.author.image.url
 
-  // Process the content to remove problematic styling
-  const processedContent = processContentHTML(post.content)
+
+  const image = extractImage(post.content) || "/default-og.jpg"
+  function removeFirstImage(html: string): string {
+    return html.replace(/<img[^>]+>/, '');
+  }
   
 
+  // Process the content to remove problematic styling
+  const processedContent = removeFirstImage(processContentHTML(post.content));
   return (
     <>
       <ArticleSchema
@@ -69,8 +100,8 @@ export default async function BlogPostPage({ params }: PageProps) {
       />
       <BreadcrumbSchema
         items={[
-          { name: "होम", url: "https://hinditechguide.com" },
-          { name: "ब्लॉग", url: "https://hinditechguide.com/blog" },
+          { name: "Home", url: "https://hinditechguide.com" },
+          { name: "Blog", url: "https://hinditechguide.com/blog" },
           { name: post.title, url: `https://hinditechguide.com/blog/${slug}` },
         ]}
       />
@@ -79,10 +110,10 @@ export default async function BlogPostPage({ params }: PageProps) {
         <Link href="/blog">
           <Button variant="ghost" className="mb-8 gap-2">
             <ArrowLeft className="h-4 w-4" />
-            वापस ब्लॉग पर
+            वापस Blog पर
           </Button>
         </Link>
-        
+
         <header className="mb-8">
           <Badge variant="secondary" className="mb-4">
             {category}
@@ -132,8 +163,14 @@ export default async function BlogPostPage({ params }: PageProps) {
             </div>
           )}
         </header>
-
-        {/* Blog Content with enhanced prose styling */}
+        <Image
+          src={image}
+          alt={post.title}
+          width={1200}
+          height={628}
+          className="rounded-xl w-full h-auto mb-6"
+          priority
+        />
         <div
           className="prose prose-lg max-w-none dark:prose-invert
             prose-headings:font-bold prose-headings:tracking-tight

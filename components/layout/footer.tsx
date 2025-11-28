@@ -23,17 +23,17 @@ export function Footer() {
             <ul className="space-y-2 text-sm">
               <li>
                 <Link href="/" className="text-muted-foreground hover:text-foreground">
-                  होम
+                  Home
                 </Link>
               </li>
               <li>
                 <Link href="/blog" className="text-muted-foreground hover:text-foreground">
-                  ब्लॉग
+                  Blog
                 </Link>
               </li>
               <li>
                 <Link href="/about" className="text-muted-foreground hover:text-foreground">
-                  हमारे बारे में
+                  About Us
                 </Link>
               </li>
               <li>

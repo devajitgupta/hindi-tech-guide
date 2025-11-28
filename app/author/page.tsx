@@ -19,6 +19,9 @@ const expertise = [
   "Artificial Intelligence",
   "Software Engineering",
   "Database Management",
+  "Technical Writing",
+  "Social Media Engagement",
+
 ]
 
 const achievements = [
@@ -54,7 +57,7 @@ export default function AuthorPage() {
       />
       <BreadcrumbSchema
         items={[
-          { name: "होम", url: "https://hinditechguide.com" },
+          { name: "Home", url: "https://hinditechguide.com" },
           { name: "लेखक", url: "https://hinditechguide.com/author" },
         ]}
       />

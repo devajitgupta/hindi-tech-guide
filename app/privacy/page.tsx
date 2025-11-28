@@ -17,7 +17,7 @@ export default function PrivacyPage() {
       />
       <BreadcrumbSchema
         items={[
-          { name: "होम", url: "https://hinditechguide.com" },
+          { name: "Home", url: "https://hinditechguide.com" },
           { name: "गोपनीयता नीति", url: "https://hinditechguide.com/privacy" },
         ]}
       />

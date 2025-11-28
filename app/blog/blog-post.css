@@ -1,7 +1,4 @@
-/* app/blog/blog-post.css */
-/* Add this to your global CSS or create a separate CSS module */
 
-/* Override Blogger's inline styles for better control */
 .prose span[style] {
   font-size: inherit !important;
 }
@@ -10,7 +7,6 @@
   text-align: inherit !important;
 }
 
-/* Ensure headings are visible and properly styled */
 .prose h1,
 .prose h2,
 .prose h3,
@@ -40,7 +36,6 @@
   margin-bottom: 0.5rem !important;
 }
 
-/* Ensure lists are properly styled */
 .prose ul,
 .prose ol {
   padding-left: 1.5rem !important;
@@ -93,6 +88,8 @@
 .prose .separator {
   text-align: center !important;
   margin: 1.5rem 0 !important;
+    display: none !important; /* पूरी तरह hide करने के लिए */
+
 }
 
 /* Horizontal rules */

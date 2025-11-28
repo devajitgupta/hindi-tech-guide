@@ -17,7 +17,7 @@ export default function TermsPage() {
       />
       <BreadcrumbSchema
         items={[
-          { name: "होम", url: "https://hinditechguide.com" },
+          { name: "Home", url: "https://hinditechguide.com" },
           { name: "नियम और शर्तें", url: "https://hinditechguide.com/terms" },
         ]}
       />

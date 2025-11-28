@@ -6,7 +6,7 @@ import { WebPageSchema, BreadcrumbSchema } from "@/components/seo/json-ld"
 import { Target, Users, Zap, Heart, ArrowRight } from "lucide-react"
 
 export const metadata: Metadata = {
-  title: "हमारे बारे में - HindiTechGuide का मिशन और विजन",
+  title: "About Us - HindiTechGuide का मिशन और विजन",
   description:
     "HindiTechGuide के बारे में जानें। हम भारतीय टेक्नोलॉजी उत्साही लोगों के लिए हिंदी में गुणवत्ता पूर्ण तकनीकी गाइड और ट्यूटोरियल प्रदान करते हैं।",
 }
@@ -38,21 +38,21 @@ export default function AboutPage() {
   return (
     <>
       <WebPageSchema
-        name="हमारे बारे में - HindiTechGuide"
+        name="About Us - HindiTechGuide"
         description="HindiTechGuide का मिशन, विजन और मूल्य"
         url="https://hinditechguide.com/about"
       />
       <BreadcrumbSchema
         items={[
-          { name: "होम", url: "https://hinditechguide.com" },
-          { name: "हमारे बारे में", url: "https://hinditechguide.com/about" },
+          { name: "Home", url: "https://hinditechguide.com" },
+          { name: "About Us", url: "https://hinditechguide.com/about" },
         ]}
       />
 
       {/* Hero Section */}
       <section className="border-b bg-gradient-to-b from-background to-muted/20 py-16 md:py-24">
         <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="font-bold text-4xl text-balance md:text-5xl lg:text-6xl mb-6">हमारे बारे में</h1>
+          <h1 className="font-bold text-4xl text-balance md:text-5xl lg:text-6xl mb-6">About Us</h1>
           <p className="text-lg text-muted-foreground text-pretty md:text-xl leading-relaxed">
             HindiTechGuide भारतीय टेक्नोलॉजी उत्साही लोगों के लिए एक समर्पित मंच है जहां हम हिंदी में गुणवत्ता पूर्ण तकनीकी गाइड,
             ट्यूटोरियल और नवीनतम टेक समाचार प्रदान करते हैं।

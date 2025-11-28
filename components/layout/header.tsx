@@ -4,11 +4,11 @@ import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 
 const navLinks = [
-  { href: "/", label: "होम" },
-  { href: "/blog", label: "ब्लॉग" }, // Added blog link to navigation
-  { href: "/about", label: "हमारे बारे में" },
-  { href: "/author", label: "लेखक" },
-  { href: "/contact", label: "संपर्क करें" },
+  { href: "/", label: "Home" },
+  { href: "/blog", label: "Blog" }, // Added blog link to navigation
+  { href: "/about", label: "About Us" },
+  { href: "/author", label: "Writer" },
+  { href: "/contact", label: "Contact" },
 ]
 
 export function Header() {

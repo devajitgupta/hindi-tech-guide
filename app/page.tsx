@@ -7,7 +7,7 @@ import { WebPageSchema, BreadcrumbSchema } from "@/components/seo/json-ld"
 import { ArrowRight, BookOpen, Lightbulb, TrendingUp, Code2, Smartphone, Globe } from "lucide-react"
 
 export const metadata: Metadata = {
-  title: "होम - हिंदी में तकनीकी गाइड और ट्यूटोरियल",
+  title: "Home - हिंदी में तकनीकी गाइड और ट्यूटोरियल",
   description:
     "HindiTechGuide पर आपका स्वागत है। भारतीय टेक्नोलॉजी उत्साही लोगों के लिए हिंदी में व्यापक तकनीकी गाइड, ट्यूटोरियल और नवीनतम टेक समाचार।",
 }
@@ -73,11 +73,11 @@ export default function HomePage() {
   return (
     <>
       <WebPageSchema
-        name="HindiTechGuide - होम पेज"
+        name="HindiTechGuide - Home पेज"
         description="भारतीय टेक्नोलॉजी उत्साही लोगों के लिए हिंदी में तकनीकी गाइड और ट्यूटोरियल"
         url="https://hinditechguide.com"
       />
-      <BreadcrumbSchema items={[{ name: "होम", url: "https://hinditechguide.com" }]} />
+      <BreadcrumbSchema items={[{ name: "Home", url: "https://hinditechguide.com" }]} />
 
       {/* Hero Section */}
       <section className="relative overflow-hidden border-b bg-gradient-to-b from-background to-muted/20 py-20 md:py-32">

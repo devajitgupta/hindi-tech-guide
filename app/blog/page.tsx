@@ -7,11 +7,11 @@ import { WebPageSchema, BreadcrumbSchema } from "@/components/seo/json-ld"
 import { getAllPosts } from "@/lib/blogger"
 
 export const metadata = {
-  title: "ब्लॉग - HindiTechGuide | टेक न्यूज़ और ट्यूटोरियल",
-  description: "हिंदी में नवीनतम तकनीक, गाइड, ब्लॉग और टिप्स। रोजाना अपडेटेड ब्लॉग सेक्शन।",
+  title: "Blog - HindiTechGuide | टेक न्यूज़ और ट्यूटोरियल",
+  description: "हिंदी में नवीनतम तकनीक, गाइड, Blog और टिप्स। रोजाना अपडेटेड Blog सेक्शन।",
   openGraph: {
-    title: "ब्लॉग - HindiTechGuide",
-    description: "हिंदी में नवीनतम तकनीक ब्लॉग और ट्यूटोरियल।",
+    title: "Blog - HindiTechGuide",
+    description: "हिंदी में नवीनतम तकनीक Blog और ट्यूटोरियल।",
     url: "https://hinditechguide.com/blog",
     siteName: "HindiTechGuide",
     type: "website",
@@ -71,15 +71,15 @@ export default async function BlogPage() {
   return (
     <>
       <WebPageSchema
-        name="ब्लॉग - HindiTechGuide"
+        name="Blog - HindiTechGuide"
         description="तकनीकी गाइड, ट्यूटोरियल और लेख हिंदी में"
         url="https://hinditechguide.com/blog"
       />
 
       <BreadcrumbSchema
         items={[
-          { name: "होम", url: "https://hinditechguide.com" },
-          { name: "ब्लॉग", url: "https://hinditechguide.com/blog" },
+          { name: "Home", url: "https://hinditechguide.com" },
+          { name: "Blog", url: "https://hinditechguide.com/blog" },
         ]}
       />
 
@@ -87,7 +87,7 @@ export default async function BlogPage() {
 
         {/* Header */}
         <div className="mb-12 text-center">
-          <h1 className="text-4xl font-bold sm:text-5xl lg:text-6xl">हमारा ब्लॉग</h1>
+          <h1 className="text-4xl font-bold sm:text-5xl lg:text-6xl">हमारा Blog</h1>
           <p className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto">
             नवीनतम तकनीक और ट्यूटोरियल हिंदी में।
           </p>
