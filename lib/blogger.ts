@@ -11,7 +11,7 @@ export function transformSpansToParagraphs() {
   return (tree: any) => {
     visit(tree, "element", (node) => {
       if (node.tagName === "span" && node.properties?.style?.includes("font-size")) {
-        node.tagName = "p"; // convert span to paragraph
+        node.tagName = "p";
         delete node.properties?.style;
       }
     });
@@ -21,7 +21,7 @@ export function transformSpansToParagraphs() {
 export async function getAllPosts(limit: number = 20) {
   const res = await fetch(
     `${BASE_URL}/posts?key=${API_KEY}&maxResults=${limit}`,
-    { next: { revalidate: 3600 } } // 1 hour revalidate
+    { next: { revalidate: 3600 } }
   )
   const data = await res.json()
   return data.items || []
