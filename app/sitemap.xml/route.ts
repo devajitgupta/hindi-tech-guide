@@ -4,9 +4,9 @@ const BLOG_ID = process.env.BLOG_ID;
 const API_KEY = process.env.BLOGGER_API_KEY;
 
 export async function GET() {
-  const res = await fetch(
+   const res = await fetch(
     `https://www.googleapis.com/blogger/v3/blogs/${BLOG_ID}/posts?key=${API_KEY}&maxResults=500`,
-    { next: { revalidate: 86400 } }
+    { cache: "no-cache" }
   );
 
   const data = await res.json();
