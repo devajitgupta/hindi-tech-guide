@@ -23,6 +23,10 @@ export const metadata = {
       },
     ],
   },
+alternates: {
+  canonical: "https://hinditechguide.com/blog",
+},
+
 }
 
 
@@ -54,7 +58,7 @@ export default async function BlogPage() {
 
     return {
       slug,
-      title: post.title,
+    title: post.title + " | HindiTechGuide",
       description,
       category,
       tags,

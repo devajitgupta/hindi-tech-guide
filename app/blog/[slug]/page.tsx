@@ -7,10 +7,8 @@ import { ArticleSchema, BreadcrumbSchema } from "@/components/seo/json-ld"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
-import { cleanHtml, getAllSlugs, getPostBySlug } from "@/lib/blogger"
-
-// Optional: sanitize HTML and remove inline styles
-
+import { getAllSlugs, getPostBySlug } from "@/lib/blogger"
+import '../blog-post.css'
 
 interface PageProps {
   params: { slug: string } | Promise<{ slug: string }>
@@ -19,17 +17,32 @@ interface PageProps {
 export async function generateStaticParams() {
   return await getAllSlugs()
 }
+
 export function calculateReadingTime(text: string) {
   const words = text.trim().split(/\s+/).length
   const minutes = Math.ceil(words / 200)
   return `${minutes} min read`
 }
 
-export default async function BlogPostPage({ params }: PageProps) {
+// Function to sanitize and enhance the HTML content from Blogger
+function processContentHTML(html: string): string {
+  // Remove comments
+  let processed = html.replace(/<!--[\s\S]*?-->/g, '')
+  
+  // Remove inline font-size styles that might interfere
+  processed = processed.replace(/style="[^"]*font-size:\s*[^;"]*;?[^"]*"/gi, (match) => {
+    return match.replace(/font-size:\s*[^;"]*/gi, '')
+  })
+  
+  // Clean up empty style attributes
+  processed = processed.replace(/style="\s*"/gi, '')
+  
+  return processed
+}
 
-  const { slug } = await params;
+export default async function BlogPostPage({ params }: PageProps) {
+  const { slug } = await params
   const post = await getPostBySlug(slug)
-  console.log("Fetched post:", post.content);
 
   if (!post) notFound()
 
@@ -38,8 +51,10 @@ export default async function BlogPostPage({ params }: PageProps) {
   const tags = post.labels?.slice(1) || []
   const readTime = calculateReadingTime(post.content)
   const image = post.images?.[0]?.url || post.author.image.url
-    const cleanContent = await cleanHtml(post.content);
 
+  // Process the content to remove problematic styling
+  const processedContent = processContentHTML(post.content)
+  
 
   return (
     <>
@@ -67,10 +82,17 @@ export default async function BlogPostPage({ params }: PageProps) {
             वापस ब्लॉग पर
           </Button>
         </Link>
+        
         <header className="mb-8">
-          <Badge variant="secondary" className="mb-4">{category}</Badge>
-          <h1 className="mb-4 text-4xl font-bold tracking-tight text-balance sm:text-5xl">{post.title}</h1>
-          <p className="text-xl text-muted-foreground text-pretty">{description}</p>
+          <Badge variant="secondary" className="mb-4">
+            {category}
+          </Badge>
+          <h1 className="mb-4 text-4xl font-bold tracking-tight text-balance sm:text-5xl">
+            {post.title}
+          </h1>
+          <p className="text-xl text-muted-foreground text-pretty">
+            {description}
+          </p>
 
           <div className="mt-6 flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
             <div className="flex items-center gap-2">
@@ -85,7 +107,9 @@ export default async function BlogPostPage({ params }: PageProps) {
             <Separator orientation="vertical" className="h-4" />
             <div className="flex items-center gap-2">
               <Calendar className="h-4 w-4" />
-              <time dateTime={post.published}>{new Date(post.published).toLocaleDateString("hi-IN")}</time>
+              <time dateTime={post.published}>
+                {new Date(post.published).toLocaleDateString("hi-IN")}
+              </time>
             </div>
             <Separator orientation="vertical" className="h-4" />
             <div className="flex items-center gap-2">
@@ -94,16 +118,38 @@ export default async function BlogPostPage({ params }: PageProps) {
             </div>
           </div>
 
-          <div className="mt-4 flex flex-wrap gap-2">
-            {tags.map((tag: string) => (
-              <div key={tag} className="flex items-center gap-1 text-xs text-muted-foreground">
-                <Tag className="h-3 w-3" />
-                <span>{tag}</span>
-              </div>
-            ))}
-          </div>
+          {tags.length > 0 && (
+            <div className="mt-4 flex flex-wrap gap-2">
+              {tags.map((tag: string) => (
+                <div
+                  key={tag}
+                  className="flex items-center gap-1 text-xs text-muted-foreground"
+                >
+                  <Tag className="h-3 w-3" />
+                  <span>{tag}</span>
+                </div>
+              ))}
+            </div>
+          )}
         </header>
-        <div className="prose prose-lg max-w-none dark:prose-invert" dangerouslySetInnerHTML={{ __html: cleanContent }} />
+
+        {/* Blog Content with enhanced prose styling */}
+        <div
+          className="prose prose-lg max-w-none dark:prose-invert
+            prose-headings:font-bold prose-headings:tracking-tight
+            prose-h1:text-4xl prose-h1:mb-4 prose-h1:mt-8
+            prose-h2:text-3xl prose-h2:mb-3 prose-h2:mt-6
+            prose-h3:text-2xl prose-h3:mb-2 prose-h3:mt-4
+            prose-p:text-base prose-p:leading-relaxed prose-p:mb-4
+            prose-ul:list-disc prose-ul:ml-6 prose-ul:mb-4
+            prose-ol:list-decimal prose-ol:ml-6 prose-ol:mb-4
+            prose-li:mb-2
+            prose-strong:font-bold prose-strong:text-foreground
+            prose-a:text-blue-600 prose-a:no-underline hover:prose-a:underline
+            prose-img:rounded-lg prose-img:shadow-md
+            [&_hr]:my-8 [&_hr]:border-border"
+          dangerouslySetInnerHTML={{ __html: processedContent }}
+        />
       </article>
     </>
   )
