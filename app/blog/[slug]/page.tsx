@@ -52,7 +52,7 @@ export async function generateMetadata({ params }: PageProps) {
   const base = "https://www.hinditechguide.com";
 
   const desc = post.content.replace(/<[^>]+>/g, "").slice(0, 150);
-  const ogImage = post.images?.[0]?.url 
+  const ogImage = post.images?.[0]?.url
     ? `${base}${post.images[0].url}`
     : `${base}/default-og.jpg`;
 
@@ -95,6 +95,7 @@ export async function generateMetadata({ params }: PageProps) {
 export default async function BlogPostPage({ params }: PageProps) {
   const { slug } = await params
   const post = await getPostBySlug(slug)
+  console.log(post)
 
   if (!post) notFound()
 
@@ -108,7 +109,7 @@ export default async function BlogPostPage({ params }: PageProps) {
   function removeFirstImage(html: string): string {
     return html.replace(/<img[^>]+>/, '');
   }
-  
+
 
   // Process the content to remove problematic styling
   const processedContent = removeFirstImage(processContentHTML(post.content));
@@ -143,9 +144,10 @@ export default async function BlogPostPage({ params }: PageProps) {
           <Badge variant="secondary" className="mb-4">
             {category}
           </Badge>
-          <h1 className="mb-4 text-4xl font-bold tracking-tight text-balance sm:text-5xl">
+          <h1 className="mb-4 border-b font-bold leading-normal sm:text-5xl">
             {post.title}
           </h1>
+
           <p className="text-xl text-muted-foreground text-pretty">
             {description}
           </p>
