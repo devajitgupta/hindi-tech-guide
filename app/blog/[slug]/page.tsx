@@ -44,26 +44,51 @@ function extractImage(html: string): string | null {
 }
 
 export async function generateMetadata({ params }: PageProps) {
-  const { slug } = await params
-  const post = await getPostBySlug(slug)
-  if (!post) return {}
+  const { slug } = await params;
+  const post = await getPostBySlug(slug);
 
-  const desc = post.content.replace(/<[^>]+>/g, "").slice(0, 150)
-  const image = post.images?.[0]?.url || "/default-og.jpg"
+  if (!post) return {};
+
+  const base = "https://www.hinditechguide.com";
+
+  const desc = post.content.replace(/<[^>]+>/g, "").slice(0, 150);
+  const ogImage = post.images?.[0]?.url 
+    ? `${base}${post.images[0].url}`
+    : `${base}/default-og.jpg`;
+
+  const canonicalUrl = `${base}/blog/${slug}`;
 
   return {
     title: `${post.title} | HindiTechGuide`,
     description: desc,
+
+    alternates: {
+      canonical: canonicalUrl,
+    },
+
     openGraph: {
       title: post.title,
       description: desc,
-      images: [image]
+      url: canonicalUrl,
+      type: "article",
+      siteName: "HindiTechGuide",
+      images: [
+        {
+          url: ogImage,
+          width: 1200,
+          height: 630,
+          alt: post.title,
+        }
+      ],
     },
+
     twitter: {
       card: "summary_large_image",
-      images: [image]
+      title: post.title,
+      description: desc,
+      images: [ogImage],
     }
-  }
+  };
 }
 
 
