@@ -1,0 +1,21 @@
+{
+  "homeDataPage": {
+    "title": "Welcome to HindiTechGuide",
+    "description": "Here you will find tech tutorials and guides in simple English."
+  },
+  "footer": {
+    "siteName": "HindiTechGuide",
+    "description": "Tech guides and tutorials for technology enthusiasts around the world.",
+    "quickLinks": "Quick Links",
+    "home": "Home",
+    "blog": "Blog",
+    "about": "About Us",
+    "author": "Author",
+    "legal": "Legal",
+    "privacy": "Privacy Policy",
+    "terms": "Terms & Conditions",
+    "contact": "Contact Us",
+    "connectWithUs": "Connect with us",
+    "copyright": "© {year} HindiTechGuide. All rights reserved. Created by Ajit Gupta"
+  }
+}

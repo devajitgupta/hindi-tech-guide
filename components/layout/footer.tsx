@@ -1,7 +1,15 @@
 import Link from "next/link"
 import { Facebook, Twitter, Youtube, Mail } from "lucide-react"
 
-export function Footer() {
+interface FooterProps {
+  locale: "hi" | "en"
+  dict: any 
+}
+
+export function Footer({ locale, dict }: FooterProps) {
+  const t = dict.footer
+  const year = new Date().getFullYear()
+
   return (
     <footer className="border-t bg-muted/30">
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
@@ -11,85 +19,43 @@ export function Footer() {
               <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
                 <span className="font-bold text-primary-foreground text-lg">H</span>
               </div>
-              <span className="font-bold text-lg">HindiTechGuide</span>
+              <span className="font-bold text-lg">{t.siteName}</span>
             </div>
-            <p className="text-sm text-muted-foreground">
-              भारतीय टेक्नोलॉजी उत्साही लोगों के लिए हिंदी में तकनीकी गाइड और ट्यूटोरियल।
-            </p>
+            <p className="text-sm text-muted-foreground">{t.description}</p>
           </div>
 
           <div>
-            <h3 className="mb-4 font-semibold">त्वरित लिंक</h3>
+            <h3 className="mb-4 font-semibold">{t.quickLinks}</h3>
             <ul className="space-y-2 text-sm">
-              <li>
-                <Link href="/" className="text-muted-foreground hover:text-foreground">
-                  Home
-                </Link>
-              </li>
-              <li>
-                <Link href="/blog" className="text-muted-foreground hover:text-foreground">
-                  Blog
-                </Link>
-              </li>
-              <li>
-                <Link href="/about" className="text-muted-foreground hover:text-foreground">
-                  About Us
-                </Link>
-              </li>
-              <li>
-                <Link href="/author" className="text-muted-foreground hover:text-foreground">
-                  लेखक
-                </Link>
-              </li>
+              <li><Link href={`/${locale}/`} className="...">{t.home}</Link></li>
+              <li><Link href={`/${locale}/blog`} className="...">{t.blog}</Link></li>
+              <li><Link href={`/${locale}/about`} className="...">{t.about}</Link></li>
+              <li><Link href={`/${locale}/author`} className="...">{t.author}</Link></li>
             </ul>
           </div>
 
           <div>
-            <h3 className="mb-4 font-semibold">कानूनी</h3>
+            <h3 className="mb-4 font-semibold">{t.legal}</h3>
             <ul className="space-y-2 text-sm">
-              <li>
-                <Link href="/privacy" className="text-muted-foreground hover:text-foreground">
-                  गोपनीयता नीति
-                </Link>
-              </li>
-              <li>
-                <Link href="/terms" className="text-muted-foreground hover:text-foreground">
-                  नियम और शर्तें
-                </Link>
-              </li>
-              <li>
-                <Link href="/contact" className="text-muted-foreground hover:text-foreground">
-                  संपर्क करें
-                </Link>
-              </li>
+              <li><Link href={`/${locale}/privacy`} className="...">{t.privacy}</Link></li>
+              <li><Link href={`/${locale}/terms`} className="...">{t.terms}</Link></li>
+              <li><Link href={`/${locale}/contact`} className="...">{t.contact}</Link></li>
             </ul>
           </div>
 
           <div>
-            <h3 className="mb-4 font-semibold">हमसे जुड़ें</h3>
+            <h3 className="mb-4 font-semibold">{t.connectWithUs}</h3>
             <div className="flex gap-4">
-              <Link href="#" className="text-muted-foreground hover:text-foreground">
-                <Facebook className="h-5 w-5" />
-                <span className="sr-only">Facebook</span>
-              </Link>
-              <Link href="#" className="text-muted-foreground hover:text-foreground">
-                <Twitter className="h-5 w-5" />
-                <span className="sr-only">Twitter</span>
-              </Link>
-              <Link href="#" className="text-muted-foreground hover:text-foreground">
-                <Youtube className="h-5 w-5" />
-                <span className="sr-only">YouTube</span>
-              </Link>
-              <Link href="#" className="text-muted-foreground hover:text-foreground">
-                <Mail className="h-5 w-5" />
-                <span className="sr-only">Email</span>
-              </Link>
+              <Link href="#" className="..."><Facebook className="h-5 w-5" /></Link>
+              <Link href="#" className="..."><Twitter className="h-5 w-5" /></Link>
+              <Link href="#" className="..."><Youtube className="h-5 w-5" /></Link>
+              <Link href="#" className="..."><Mail className="h-5 w-5" /></Link>
             </div>
           </div>
         </div>
 
         <div className="mt-8 border-t pt-8 text-center text-sm text-muted-foreground">
-          <p>© {new Date().getFullYear()} HindiTechGuide. All rights reserved. Created by Ajit Gupta</p>
+          <p>{t.copyright.replace("{year}", String(year))}</p>
         </div>
       </div>
     </footer>

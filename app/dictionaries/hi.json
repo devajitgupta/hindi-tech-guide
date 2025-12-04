@@ -1,0 +1,21 @@
+{
+  "homeDataPage": {
+    "title": "HindiTechGuide में आपका स्वागत है",
+    "description": "यहाँ आपको आसान और सरल हिंदी में टेक ट्यूटोरियल और गाइड मिलेंगे।"
+  },
+  "footer": {
+    "siteName": "HindiTechGuide",
+    "description": "टेक्नोलॉजी उत्साही लोगों के लिए हिंदी में तकनीकी गाइड और ट्यूटोरियल।",
+    "quickLinks": "त्वरित लिंक",
+    "home": "होम",
+    "blog": "ब्लॉग",
+    "about": "हमारे बारे में",
+    "author": "लेखक",
+    "legal": "कानूनी",
+    "privacy": "गोपनीयता नीति",
+    "terms": "नियम और शर्तें",
+    "contact": "संपर्क करें",
+    "connectWithUs": "हमसे जुड़ें",
+    "copyright": "© {year} HindiTechGuide. सर्वाधिकार सुरक्षित। निर्मित: अजय गुप्ता"
+  }
+}
