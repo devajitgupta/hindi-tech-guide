@@ -7,8 +7,11 @@ import { ArticleSchema, BreadcrumbSchema } from "@/components/seo/json-ld"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
-import { getAllSlugs, getPostBySlug } from "@/lib/blogger"
+import { getAllSlugs, getLatestPosts, getPostBySlug, getRelatedPosts } from "@/lib/blogger"
 import '../blog-post.css'
+import ReadAlso from "@/components/ReadAlso"
+import LatestPosts from "@/components/LatestPosts"
+
 
 interface PageProps {
   params: { slug: string } | Promise<{ slug: string }>
@@ -46,6 +49,7 @@ function extractImage(html: string): string | null {
 export async function generateMetadata({ params }: PageProps) {
   const { slug } = await params;
   const post = await getPostBySlug(slug);
+
 
   if (!post) return {};
 
@@ -90,14 +94,11 @@ export async function generateMetadata({ params }: PageProps) {
     }
   };
 }
-
-
 export default async function BlogPostPage({ params }: PageProps) {
   const { slug } = await params
   const post = await getPostBySlug(slug)
-  console.log(post)
-
   if (!post) notFound()
+  const relatedPosts = await getRelatedPosts(slug, post.labels);
 
   const description = post.content.replace(/<[^>]+>/g, "").slice(0, 150) + "..."
   const category = post.labels?.[0] || "General"
@@ -113,6 +114,9 @@ export default async function BlogPostPage({ params }: PageProps) {
 
   // Process the content to remove problematic styling
   const processedContent = removeFirstImage(processContentHTML(post.content));
+  const latestPosts = await getLatestPosts();
+
+
   return (
     <>
       <ArticleSchema
@@ -214,6 +218,10 @@ export default async function BlogPostPage({ params }: PageProps) {
             [&_hr]:my-8 [&_hr]:border-border"
           dangerouslySetInnerHTML={{ __html: processedContent }}
         />
+        <ReadAlso posts={relatedPosts} />
+        <LatestPosts posts={latestPosts} />
+
+
       </article>
     </>
   )

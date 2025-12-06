@@ -1,11 +1,11 @@
 import Link from "next/link"
 import { Menu } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
+import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet"
 
 const navLinks = [
   { href: "/", label: "Home" },
-  { href: "/blog", label: "Blog" }, // Added blog link to navigation
+  { href: "/blog", label: "Blog" },
   { href: "/about", label: "About Us" },
   { href: "/author", label: "Writer" },
   { href: "/contact", label: "Contact" },
@@ -44,7 +44,11 @@ export function Header() {
                 <span className="sr-only">Toggle menu</span>
               </Button>
             </SheetTrigger>
+
             <SheetContent side="right">
+              {/* Add SheetTitle with sr-only for accessibility */}
+              <SheetTitle className="sr-only">Mobile Menu</SheetTitle>
+              
               <nav className="flex flex-col gap-4 mt-8">
                 {navLinks.map((link) => (
                   <Link

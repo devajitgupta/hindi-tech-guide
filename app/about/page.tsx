@@ -8,31 +8,36 @@ import { Target, Users, Zap, Heart, ArrowRight } from "lucide-react"
 export const metadata: Metadata = {
   title: "About Us - HindiTechGuide का मिशन और विजन",
   description:
-    "HindiTechGuide के बारे में जानें। हम भारतीय टेक्नोलॉजी उत्साही लोगों के लिए हिंदी में गुणवत्ता पूर्ण तकनीकी गाइड और ट्यूटोरियल प्रदान करते हैं।",
+    "HindiTechGuide में पाएँ Trending Topics, Viral News, Google News Updates, Tech News, Mobile Tips, Laptop Guides, Reviews और हर तरह का Latest और Informative Content—सभी हिंदी और आसान Hinglish में।",
 }
 
 const values = [
   {
     icon: Target,
     title: "हमारा उद्देश्य",
-    description: "तकनीकी ज्ञान को सभी के लिए सुलभ बनाना, विशेष रूप से हिंदी भाषी दर्शकों के लिए।",
+    description:
+      "हर तरह के Trending, Viral और Informative कंटेंट को सरल और विश्वसनीय तरीके से हिंदी में उपलब्ध कराना।",
   },
   {
     icon: Users,
     title: "हमारा समुदाय",
-    description: "भारतीय टेक्नोलॉजी उत्साही लोगों का एक बढ़ता हुआ समुदाय जो एक साथ सीखता और बढ़ता है।",
+    description:
+      "खबरों, ट्रेंड्स और टेक्नोलॉजी में रुचि रखने वाले लाखों हिंदी पाठकों का बढ़ता हुआ समुदाय।",
   },
   {
     icon: Zap,
-    title: "हमारा दृष्टिकोण",
-    description: "जटिल तकनीकी अवधारणाओं को सरल, समझने योग्य और व्यावहारिक तरीके से प्रस्तुत करना।",
+    title: "हमारी ताकत",
+    description:
+      "तेज़ और सटीक अपडेट—चाहे बात Social Media Trends की हो, Tech News की या Viral Breaking News की।",
   },
   {
     icon: Heart,
     title: "हमारी प्रतिबद्धता",
-    description: "नवीनतम और सटीक जानकारी प्रदान करने के लिए निरंतर प्रयास और समर्पण।",
+    description:
+      "हम हर विषय पर वास्तविक, ताज़ा, और रिसर्च-आधारित जानकारी प्रदान करने के लिए समर्पित हैं।",
   },
-]
+];
+
 
 export default function AboutPage() {
   return (
@@ -65,21 +70,29 @@ export default function AboutPage() {
         <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
           <div className="prose prose-lg max-w-none">
             <h2 className="font-bold text-3xl mb-6">हमारी कहानी</h2>
+            <h2 className="font-bold text-3xl mb-6">हमारी कहानी</h2>
+
             <div className="space-y-4 text-muted-foreground text-lg leading-relaxed">
               <p>
-                HindiTechGuide की शुरुआत एक सरल विचार से हुई - भारत में तकनीकी शिक्षा को और अधिक सुलभ बनाना। हमने देखा कि अधिकांश
-                तकनीकी संसाधन केवल अंग्रेजी में उपलब्ध हैं, जो कई भारतीय उत्साही लोगों के लिए एक बाधा बन सकता है।
+                HindiTechGuide की शुरुआत एक ऐसे मंच के रूप में हुई जहाँ हर व्यक्ति अपनी मातृभाषा
+                में ट्रेंडिंग और वायरल इंटरनेट कंटेंट आसानी से समझ सके। आज की डिजिटल दुनिया में
+                हर सेकंड नई खबरें, नए ट्रेंड्स और नई टेक्नोलॉजी सामने आती है—लेकिन हिंदी में
+                विश्वसनीय और सरल जानकारी की कमी थी।
               </p>
+
               <p>
-                इसी चुनौती को ध्यान में रखते हुए, हमने HindiTechGuide की स्थापना की - एक मंच जहां तकनीकी ज्ञान को हिंदी में सरल और
-                समझने योग्य तरीके से प्रस्तुत किया जाता है। हमारा लक्ष्य है कि हर कोई, चाहे उनकी अंग्रेजी कितनी भी मजबूत या कमजोर हो,
-                नवीनतम तकनीकों को सीख सके।
+                इसी कमी को पूरा करने के लिए हमने यह प्लेटफ़ॉर्म बनाया। यहाँ हम Trending Topics,
+                Viral News, Entertainment Updates, Tech News, Social Media Trends और Digital दुनिया
+                से जुड़ी हर बड़ी और महत्वपूर्ण जानकारी आपके लिए लाते हैं।
               </p>
+
               <p>
-                आज, HindiTechGuide हजारों पाठकों को प्रोग्रामिंग, वेब डेवलपमेंट, मोबाइल ऐप्स, आर्टिफिशियल इंटेलिजेंस और अन्य कई तकनीकी
-                विषयों पर गाइड प्रदान करता है। हम गर्व से कह सकते हैं कि हमने भारतीय टेक समुदाय में एक सकारात्मक प्रभाव डाला है।
+                हमारा उद्देश्य है कि भारत का हर इंटरनेट यूज़र बिना किसी कठिनाई के हर तरह का कंटेंट
+                — चाहे वह Breaking News हो, Tech Update हो, Social Media Trend हो या Viral Story —
+                वह सब हिंदी में एक ही जगह आसानी से पढ़ सके।
               </p>
             </div>
+
           </div>
         </div>
       </section>
