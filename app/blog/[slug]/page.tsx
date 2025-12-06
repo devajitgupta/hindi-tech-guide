@@ -94,6 +94,7 @@ export async function generateMetadata({ params }: PageProps) {
     }
   };
 }
+
 export default async function BlogPostPage({ params }: PageProps) {
   const { slug } = await params
   const post = await getPostBySlug(slug)
