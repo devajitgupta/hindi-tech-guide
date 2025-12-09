@@ -147,46 +147,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Recent Articles Section */}
-      <section className="border-t bg-muted/20 py-16 md:py-24">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="mb-12 flex items-center justify-between">
-            <div>
-              <h2 className="font-bold text-3xl text-balance md:text-4xl mb-4">नवीनतम लेख</h2>
-              <p className="text-lg text-muted-foreground">हमारे सबसे हाल के तकनीकी गाइड और ट्यूटोरियल पढ़ें</p>
-            </div>
-          </div>
-
-          <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-            {recentArticles.map((article, index) => (
-              <Card key={index} className="overflow-hidden hover:shadow-lg transition-shadow">
-                <div className="aspect-video w-full overflow-hidden bg-muted">
-                  <img
-                    src={article.image || "/placeholder.svg"}
-                    alt={article.title}
-                    className="h-full w-full object-cover transition-transform hover:scale-105"
-                  />
-                </div>
-                <CardHeader>
-                  <div className="flex items-center gap-2 mb-2">
-                    <Badge variant="secondary">{article.category}</Badge>
-                    <span className="text-sm text-muted-foreground">{article.readTime}</span>
-                  </div>
-                  <CardTitle className="text-xl leading-snug">{article.title}</CardTitle>
-                  <CardDescription className="text-base leading-relaxed">{article.description}</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <Button variant="link" className="px-0">
-                    पूरा लेख पढ़ें
-                    <ArrowRight className="ml-2 h-4 w-4" />
-                  </Button>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
-
+   
       {/* CTA Section */}
       <section className="border-t py-16 md:py-24">
         <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 text-center">

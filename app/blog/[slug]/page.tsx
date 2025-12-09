@@ -1,4 +1,3 @@
-// app/blog/[slug]/page.tsx
 import { notFound } from "next/navigation"
 import Link from "next/link"
 import Image from "next/image"
@@ -11,7 +10,6 @@ import { getAllSlugs, getLatestPosts, getPostBySlug, getRelatedPosts } from "@/l
 import '../blog-post.css'
 import ReadAlso from "@/components/ReadAlso"
 import LatestPosts from "@/components/LatestPosts"
-
 
 interface PageProps {
   params: { slug: string } | Promise<{ slug: string }>
@@ -33,38 +31,63 @@ function processContentHTML(html: string): string {
     return match.replace(/font-size:\s*[^;"]*/gi, '')
   })
   processed = processed.replace(/style="\s*"/gi, '')
-
   processed = processed.replace(/\s{2,}/g, ' ')
   processed = processed.replace(/^\s+|\s+$/gm, '')
   processed = processed.replace(/\n{2,}/g, '\n')
-
   return processed
 }
 
 function extractImage(html: string): string | null {
-  const match = html.match(/<img[^>]+src="([^">]+)"/)
-  return match ? match[1] : null
+  const imgRegex = /<img[^>]+src="([^">]+)"[^>]*>/i
+  const match = html.match(imgRegex)
+  
+  if (match && match[1]) {
+    let src = match[1].trim()
+    
+    if (src.startsWith('/')) {
+      src = `https://www.hinditechguide.com${src}`
+    }
+    
+    if (src.includes('blogger.googleusercontent.com') && !src.startsWith('https://')) {
+      src = src.replace('http://', 'https://')
+    }
+    return src
+  }
+  
+  return null
 }
 
 export async function generateMetadata({ params }: PageProps) {
   const { slug } = await params;
   const post = await getPostBySlug(slug);
 
-
   if (!post) return {};
 
   const base = "https://www.hinditechguide.com";
-
-  const desc = post.content.replace(/<[^>]+>/g, "").slice(0, 150);
-  const ogImage = post.images?.[0]?.url
-    ? `${base}${post.images[0].url}`
-    : `${base}/default-og.jpg`;
+  
+  const rawDescription = post.content.replace(/<[^>]+>/g, "").trim()
+  const description = rawDescription.length > 150 
+    ? rawDescription.slice(0, 150) + "..."
+    : rawDescription;
+  
+  let ogImage = null;  
+  const contentImage = extractImage(post.content)
+  if (contentImage) {
+    ogImage = contentImage
+  }
+  else if (post.images && post.images.length > 0 && post.images[0]?.url) {
+    const imgUrl = post.images[0].url
+    ogImage = imgUrl.startsWith('http') ? imgUrl : `${base}${imgUrl}`
+  }
+  else {
+    ogImage = `${base}/default-og.jpg`
+  }
 
   const canonicalUrl = `${base}/blog/${slug}`;
 
   return {
     title: `${post.title} | HindiTechGuide`,
-    description: desc,
+    description: description,
 
     alternates: {
       canonical: canonicalUrl,
@@ -72,7 +95,7 @@ export async function generateMetadata({ params }: PageProps) {
 
     openGraph: {
       title: post.title,
-      description: desc,
+      description: description,
       url: canonicalUrl,
       type: "article",
       siteName: "HindiTechGuide",
@@ -84,13 +107,19 @@ export async function generateMetadata({ params }: PageProps) {
           alt: post.title,
         }
       ],
+      publishedTime: post.published,
+      modifiedTime: post.updated,
+      authors: [post.author.displayName],
+      tags: post.labels || [],
     },
 
     twitter: {
       card: "summary_large_image",
       title: post.title,
-      description: desc,
+      description: description,
       images: [ogImage],
+      creator: "@hinditechguide",
+      site: "@hinditechguide",
     }
   };
 }
@@ -106,24 +135,41 @@ export default async function BlogPostPage({ params }: PageProps) {
   const tags = post.labels?.slice(1) || []
   const readTime = calculateReadingTime(post.content)
 
-
-  const image = extractImage(post.content) || "/default-og.jpg"
-  function removeFirstImage(html: string): string {
-    return html.replace(/<img[^>]+>/, '');
+  // Get image for main content display (without base URL for Next.js Image)
+  function getContentImage(html: string): string {
+    const imgRegex = /<img[^>]+src="([^">]+)"[^>]*>/i
+    const match = html.match(imgRegex)
+    
+    if (match && match[1]) {
+      let src = match[1].trim()
+      
+      // Remove protocol and domain for Next.js Image component
+      if (src.startsWith('https://')) {
+        src = src.replace('https://www.hinditechguide.com', '')
+      }
+      
+      return src
+    }
+    
+    return "/default-og.jpg"
   }
 
+  const contentImage = getContentImage(post.content)
+  
+  function removeFirstImage(html: string): string {
+    return html.replace(/<img[^>]+>/i, '');
+  }
 
   // Process the content to remove problematic styling
   const processedContent = removeFirstImage(processContentHTML(post.content));
   const latestPosts = await getLatestPosts();
-
 
   return (
     <>
       <ArticleSchema
         headline={post.title}
         description={description}
-        image={image}
+        image={extractImage(post.content) || "https://www.hinditechguide.com/default-og.jpg"}
         datePublished={post.published}
         dateModified={post.updated}
         author={{ name: post.author.displayName, jobTitle: "Author" }}
@@ -195,14 +241,21 @@ export default async function BlogPostPage({ params }: PageProps) {
             </div>
           )}
         </header>
-        <Image
-          src={image}
-          alt={post.title}
-          width={1200}
-          height={628}
-          className="rounded-xl w-full h-auto mb-6"
-          priority
-        />
+
+        {/* Featured Image */}
+        {contentImage !== "/default-og.jpg" && (
+          <div className="relative w-full h-[400px] mb-8 rounded-xl overflow-hidden">
+            <Image
+              src={contentImage}
+              alt={post.title}
+              fill
+              className="object-cover"
+              priority
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 1200px"
+            />
+          </div>
+        )}
+
         <div
           className="prose prose-lg max-w-none dark:prose-invert
             prose-headings:font-bold prose-headings:tracking-tight
@@ -219,9 +272,9 @@ export default async function BlogPostPage({ params }: PageProps) {
             [&_hr]:my-8 [&_hr]:border-border"
           dangerouslySetInnerHTML={{ __html: processedContent }}
         />
+        
         <ReadAlso posts={relatedPosts} />
         <LatestPosts posts={latestPosts} />
-
 
       </article>
     </>

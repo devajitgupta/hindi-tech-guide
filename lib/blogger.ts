@@ -1,23 +1,14 @@
 const BLOG_ID = process.env.BLOG_ID!;
 const API_KEY = process.env.BLOGGER_API_KEY!;
 const BASE_URL = `https://www.googleapis.com/blogger/v3/blogs/${BLOG_ID}`;
-
-
-
 export async function getAllPosts(limit: number = 20) {
   const res = await fetch(
     `${BASE_URL}/posts?key=${API_KEY}&maxResults=${limit}`,
     { next: { revalidate: 3600 } }
   )
   const data = await res.json()
-
-  
   return data.items || []
 }
-
-
-
-
 export async function getPostBySlug(slug: string) {
   const posts = await getAllPosts(50)
 
@@ -26,7 +17,6 @@ export async function getPostBySlug(slug: string) {
     return urlSlug === slug
   }) || null
 }
-
 export async function getAllSlugs() {
   const posts = await getAllPosts(50)
 
@@ -35,32 +25,6 @@ export async function getAllSlugs() {
     return { slug }
   })
 }
-
-// export async function getRelatedPosts(currentSlug: string, labels: string[]) {
-//   const posts = await getAllPosts(50);
-
-//   let related = posts.filter((post:any) => {
-//     const slug = post.url.split("/").pop()?.replace(".html", "") || "";
-//     if (slug === currentSlug) return false;
-
-//     return post.labels?.some((label: string) => labels.includes(label));
-//   });
-
-//   if (related.length === 0) related = posts;
-
-//   return related.slice(0, 4).map((post:any) => ({
-//     title: post.title,
-//     slug: post.url.split("/").pop()?.replace(".html", "") || "", // ✅ ALWAYS a string
-//     image:
-//       post.images?.[0]?.url ||
-//       extractFirstImage(post.content) ||
-//       "/default-og.jpg",
-//     description: post.content.replace(/<[^>]+>/g, "").slice(0, 120) + "...",
-//   }));
-// }
-// @/lib/blogger.ts
-
-
 export async function getLatestPosts(limit: number = 3) {
   const res = await fetch(
     `${BASE_URL}/posts?key=${API_KEY}&maxResults=${limit}&orderBy=published`,
@@ -90,24 +54,21 @@ function extractFirstImage(html: string) {
 }
 export async function getRelatedPosts(currentSlug: string, labels: string[]) {
   if (!labels || labels.length === 0) {
-    return await getAllPosts(4); 
+    return await getAllPosts(4);
   }
-
-  const labelString = labels.join(','); 
+  const labelString = labels.join(',');
   const maxResults = 5;
-
   const apiUrl = `${BASE_URL}/posts?labels=${labelString}&maxResults=${maxResults}&key=${API_KEY}`;
-  
+
   try {
     const res = await fetch(apiUrl, {
-      next: { revalidate: 3600 } 
+      next: { revalidate: 3600 }
     });
-    
-    if (!res.ok) {
-        console.error("Error fetching related posts from Blogger API");
-        return [];
-    }
 
+    if (!res.ok) {
+      console.error("Error fetching related posts from Blogger API");
+      return [];
+    }
     const data = await res.json();
     const allFetchedPosts = data.items || [];
 
@@ -115,12 +76,10 @@ export async function getRelatedPosts(currentSlug: string, labels: string[]) {
       const slug = post.url.split("/").pop()?.replace(".html", "") || "";
       return slug !== currentSlug;
     });
-
-    relatedPosts = relatedPosts.slice(0, 4);
-
+    relatedPosts = relatedPosts.slice(0, 10)
     return relatedPosts.map((post: any) => ({
       title: post.title,
-      slug: post.url.split("/").pop()?.replace(".html", "") || "", 
+      slug: post.url.split("/").pop()?.replace(".html", "") || "",
       image:
         post.images?.[0]?.url ||
         extractFirstImage(post.content) ||
