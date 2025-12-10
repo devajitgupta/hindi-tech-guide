@@ -5,6 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge"
 import { WebPageSchema, BreadcrumbSchema } from "@/components/seo/json-ld"
 import { ArrowRight, BookOpen, Lightbulb, TrendingUp, Code2, Smartphone, Globe } from "lucide-react"
+import MobileTipsLabels from "@/components/Mobile-tips"
 
 export const metadata: Metadata = {
   title: "Home - हिंदी में तकनीकी गाइड और ट्यूटोरियल",
@@ -78,46 +79,9 @@ export default function HomePage() {
         url="https://hinditechguide.com"
       />
       <BreadcrumbSchema items={[{ name: "Home", url: "https://hinditechguide.com" }]} />
-
-      {/* Hero Section */}
-      <section className="relative overflow-hidden border-b bg-gradient-to-b from-background to-muted/20 py-20 md:py-32">
+     <section className="py-5 md:py-6">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="grid gap-12 lg:grid-cols-2 lg:gap-16 items-center">
-            <div className="space-y-8">
-              <Badge className="w-fit">हिंदी में तकनीकी शिक्षा</Badge>
-              <h1 className="font-bold text-4xl text-balance sm:text-5xl md:text-6xl lg:text-7xl">
-                <span className="text-foreground">HindiTechGuide</span>
-                <br />
-                <span className="text-primary">टेक्नोलॉजी को आसान बनाएं</span>
-              </h1>
-              <p className="text-lg text-muted-foreground text-pretty md:text-xl leading-relaxed">
-                अजीत गुप्ता द्वारा लिखे गए हिंदी में तकनीकी गाइड, ट्यूटोरियल और नवीनतम टेक समाचार। प्रोग्रामिंग, वेब डेवलपमेंट, AI और नई
-                तकनीकों के बारे में सीखें।
-              </p>
-              <div className="flex flex-col gap-4 sm:flex-row">
-                <Button size="lg" className="text-lg" asChild>
-                  <Link href="/about">
-                    शुरू करें
-                    <ArrowRight className="ml-2 h-5 w-5" />
-                  </Link>
-                </Button>
-                <Button size="lg" variant="outline" className="text-lg bg-transparent" asChild>
-                  <Link href="/author">लेखक के बारे में</Link>
-                </Button>
-              </div>
-            </div>
-            <div className="relative">
-              <div className="relative aspect-square overflow-hidden rounded-2xl border bg-muted/50">
-                <img
-                  src="/hinditechguide.png"
-                  alt="Technology Guide Illustration"
-                  className="h-full w-full object-cover"
-                />
-              </div>
-              <div className="absolute -bottom-4 -right-4 h-32 w-32 rounded-full bg-primary/20 blur-3xl" />
-              <div className="absolute -top-4 -left-4 h-32 w-32 rounded-full bg-primary/10 blur-3xl" />
-            </div>
-          </div>
+           <MobileTipsLabels/>
         </div>
       </section>
 
@@ -146,8 +110,6 @@ export default function HomePage() {
           </div>
         </div>
       </section>
-
-   
       {/* CTA Section */}
       <section className="border-t py-16 md:py-24">
         <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 text-center">

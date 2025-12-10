@@ -93,3 +93,43 @@ export async function getRelatedPosts(currentSlug: string, labels: string[]) {
   }
 }
 
+export async function getPostsByLabel(
+  label: string,
+  limit: number = 20
+) {
+  const apiUrl = `${BASE_URL}/posts?labels=${encodeURIComponent(label)}&maxResults=${limit}&key=${API_KEY}`
+
+  const res = await fetch(apiUrl, {
+    next: { revalidate: 3600 }
+  })
+
+  if (!res.ok) return []
+
+  const data = await res.json()
+
+  return (data.items || []).map((post: any) => ({
+    title: post.title,
+    slug: post.url.split("/").pop()?.replace(".html", "") || "",
+    image:
+      post.images?.[0]?.url ||
+      extractFirstImage(post.content) ||
+      "/default-og.jpg",
+    description:
+      post.content.replace(/<[^>]+>/g, "").slice(0, 150) + "...",
+    date: post.published
+  }))
+}
+export function extractLabels(posts: any[]) {
+  const labelsSet = new Set<string>()
+
+  posts.forEach(post => {
+    post.labels?.forEach((label: string) => {
+      if (label !== "Mobile Tips") {
+        labelsSet.add(label)
+      }
+    })
+  })
+
+  return Array.from(labelsSet)
+}
+

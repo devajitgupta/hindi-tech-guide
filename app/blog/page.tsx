@@ -4,7 +4,7 @@ import { Calendar, Clock, Tag } from "lucide-react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { WebPageSchema, BreadcrumbSchema } from "@/components/seo/json-ld"
-import { getAllPosts } from "@/lib/blogger"
+import { getAllPosts, getPostsByLabel } from "@/lib/blogger"
 
 export const metadata = {
   title: "Blog - HindiTechGuide | टेक न्यूज़ और ट्यूटोरियल",
@@ -23,29 +23,31 @@ export const metadata = {
       },
     ],
   },
-alternates: {
-  canonical: "https://hinditechguide.com/blog",
-},
+  alternates: {
+    canonical: "https://hinditechguide.com/blog",
+  },
 
+}
+function cleanHtmlText(html: string) {
+  return html
+    .replace(/<[^>]*>/g, "")
+    .replace(/&nbsp;/g, " ")
+    .replace(/&ldquo;|&rdquo;/g, '"')
+    .replace(/&lsquo;|&rsquo;/g, "'")
+    .replace(/&#39;/g, "'")
+    .replace(/&quot;/g, '"')
+    .replace(/&amp;/g, "&")
+    .replace(/\s+/g, " ")
+    .trim()
 }
 
 
 export default async function BlogPage() {
-
-  // Get all posts
   const items = await getAllPosts()
-
   const posts = items.map((post: any) => {
     const slug = post.url.split("/").pop()?.replace(".html", "") || ""
-
-    const cleanText = post.content
-      ?.replace(/<[^>]+>/g, "")
-      ?.replace(/\s+/g, " ")
-      ?.trim() || ""
-
+    const cleanText = cleanHtmlText(post.content || "")
     const description = cleanText.slice(0, 150) + "..."
-
-    // Extract image
     function extractImage(html: string): string | null {
       const match = html.match(/<img[^>]+src="([^">]+)"/)
       return match ? match[1] : null
@@ -58,7 +60,7 @@ export default async function BlogPage() {
 
     return {
       slug,
-    title: post.title + " | HindiTechGuide",
+      title: post.title + " | HindiTechGuide",
       description,
       category,
       tags,
