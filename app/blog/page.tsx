@@ -48,6 +48,10 @@ export default async function BlogPage() {
     const slug = post.url.split("/").pop()?.replace(".html", "") || ""
     const cleanText = cleanHtmlText(post.content || "")
     const description = cleanText.slice(0, 150) + "..."
+      const rawImage = extractImage(post.content)
+    const optimizedImage = rawImage
+      ? rawImage.replace("s1600", "s600") 
+      : "/default-og.jpg"
     function extractImage(html: string): string | null {
       const match = html.match(/<img[^>]+src="([^">]+)"/)
       return match ? match[1] : null
@@ -66,7 +70,7 @@ export default async function BlogPage() {
       tags,
       readTime,
       date: post.published,
-      image,
+      image: optimizedImage,
     }
   })
 
@@ -97,25 +101,27 @@ export default async function BlogPage() {
 
         {/* Posts Grid */}
         <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-          {posts.map((post: any) => (
-            <article
-              key={post.slug}
-              className="group block"
-              itemScope
-              itemType="https://schema.org/BlogPosting"
-            >
+          {posts.map((post: any, i: number) => (
+              <article
+                key={post.slug}
+                className="group block"
+                itemScope
+                itemType="https://schema.org/BlogPosting"
+              >
               <Link href={`/blog/${post.slug}`} className="block">
                 <Card className="h-full overflow-hidden transition-shadow hover:shadow-lg">
-
-                  {/* Blog Image */}
                   <div className="relative aspect-video overflow-hidden">
                     <Image
-                      src={post.image || "/placeholder.png"}
+                      src={post.image}
                       alt={post.title}
                       fill
+                      placeholder="blur"
+                      blurDataURL="/blur-placeholder.png"
+                      priority={i < 2} 
+                      sizes="(max-width: 640px) 100vw,
+                             (max-width: 1024px) 50vw,
+                             33vw"
                       className="object-cover transition-transform group-hover:scale-105"
-                      sizes="(max-width: 768px) 100vw, 33vw"
-                      priority={false}
                     />
                   </div>
 

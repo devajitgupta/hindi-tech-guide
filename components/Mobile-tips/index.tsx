@@ -29,24 +29,26 @@ export default async function MobileTipsLabels() {
             className="group"
           >
             <Card className="h-full overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
-
-              {/* ✅ Image */}
               <div className="relative aspect-video overflow-hidden">
                 <Image
-                  src={post.image || "/default-og.jpg"}
-                  alt={post.title}           // ✅ SEO alt text
+                  src={
+                    post.image
+                      ? post.image.replace("s1600", "s600") 
+                      : "/default-og.jpg"
+                  }
+                  alt={post.title}
                   fill
+                  priority={false}
+                  placeholder="blur"
+                  blurDataURL="/blur-placeholder.png"
                   sizes="(max-width: 640px) 100vw,
-                         (max-width: 1024px) 50vw,
-                         25vw"
+         (max-width: 1024px) 50vw,
+         25vw"
                   className="object-cover transition-transform duration-300 group-hover:scale-105"
                 />
 
-                {/* Decorative Gradient Overlay */}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
               </div>
-
-              {/* Decorative Top Bar */}
               <div className="h-1 w-full bg-gradient-to-r from-primary to-purple-500" />
 
               <CardHeader>
