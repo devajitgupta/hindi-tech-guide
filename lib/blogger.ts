@@ -42,7 +42,7 @@ export async function getLatestPosts(limit: number = 3) {
     image:
       post.images?.[0]?.url ||
       extractFirstImage(post.content) ||
-      "/default-og.jpg",
+      "/default-og.webp",
     description: post.content.replace(/<[^>]+>/g, "").slice(0, 100) + "...",
     date: post.published,
   }));
@@ -83,7 +83,7 @@ export async function getRelatedPosts(currentSlug: string, labels: string[]) {
       image:
         post.images?.[0]?.url ||
         extractFirstImage(post.content) ||
-        "/default-og.jpg",
+        "/default-og.webp",
       description: post.content.replace(/<[^>]+>/g, "").slice(0, 120) + "...",
     }));
 
@@ -113,7 +113,7 @@ export async function getPostsByLabel(
     image:
       post.images?.[0]?.url ||
       extractFirstImage(post.content) ||
-      "/default-og.jpg",
+      "/default-og.webp",
     description:
       post.content.replace(/<[^>]+>/g, "").slice(0, 150) + "...",
     date: post.published

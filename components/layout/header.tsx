@@ -5,8 +5,7 @@ import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/s
 
 const navLinks = [
   { href: "/", label: "Home" },
-    { href: "/digital-coaching-centre", label: "Digital Coaching Centre" }, 
-  { href: "/blog", label: "Blog" },
+    { href: "/blog", label: "Blog" },
   { href: "/about", label: "About Us" },
   { href: "/author", label: "Writer" },
   { href: "/contact", label: "Contact" },
@@ -49,7 +48,7 @@ export function Header() {
             <SheetContent side="right">
               {/* Add SheetTitle with sr-only for accessibility */}
               <SheetTitle className="sr-only">Mobile Menu</SheetTitle>
-              
+
               <nav className="flex flex-col gap-4 mt-8">
                 {navLinks.map((link) => (
                   <Link

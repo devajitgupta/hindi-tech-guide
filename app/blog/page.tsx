@@ -51,7 +51,7 @@ export default async function BlogPage() {
       const rawImage = extractImage(post.content)
     const optimizedImage = rawImage
       ? rawImage.replace("s1600", "s600") 
-      : "/default-og.jpg"
+      : "/default-og.webp"
     function extractImage(html: string): string | null {
       const match = html.match(/<img[^>]+src="([^">]+)"/)
       return match ? match[1] : null

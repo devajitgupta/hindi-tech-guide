@@ -10,6 +10,7 @@ import { getAllSlugs, getLatestPosts, getPostBySlug, getRelatedPosts } from "@/l
 import '../blog-post.css'
 import ReadAlso from "@/components/ReadAlso"
 import LatestPosts from "@/components/LatestPosts"
+import SocialShare from "@/components/SocialShare"
 
 interface PageProps {
   params: { slug: string } | Promise<{ slug: string }>
@@ -80,7 +81,7 @@ export async function generateMetadata({ params }: PageProps) {
     ogImage = imgUrl.startsWith('http') ? imgUrl : `${base}${imgUrl}`
   }
   else {
-    ogImage = `${base}/default-og.jpg`
+    ogImage = `${base}/default-og.webp`
   }
 
   const canonicalUrl = `${base}/blog/${slug}`;
@@ -151,7 +152,7 @@ export default async function BlogPostPage({ params }: PageProps) {
       return src
     }
     
-    return "/default-og.jpg"
+    return "/default-og.webp"
   }
 
   const contentImage = getContentImage(post.content)
@@ -169,7 +170,7 @@ export default async function BlogPostPage({ params }: PageProps) {
       <ArticleSchema
         headline={post.title}
         description={description}
-        image={extractImage(post.content) || "https://www.hinditechguide.com/default-og.jpg"}
+        image={extractImage(post.content) || "https://www.hinditechguide.com/default-og.webp"}
         datePublished={post.published}
         dateModified={post.updated}
         author={{ name: post.author.displayName, jobTitle: "Author" }}
@@ -243,7 +244,7 @@ export default async function BlogPostPage({ params }: PageProps) {
         </header>
 
         {/* Featured Image */}
-        {contentImage !== "/default-og.jpg" && (
+        {contentImage !== "/default-og.webp" && (
           <div className="relative w-full h-[400px] mb-8 rounded-xl overflow-hidden">
             <Image
               src={contentImage}
@@ -272,7 +273,7 @@ export default async function BlogPostPage({ params }: PageProps) {
             [&_hr]:my-8 [&_hr]:border-border"
           dangerouslySetInnerHTML={{ __html: processedContent }}
         />
-        
+        <SocialShare title={"Social"}/>
         <ReadAlso posts={relatedPosts} />
         <LatestPosts posts={latestPosts} />
 

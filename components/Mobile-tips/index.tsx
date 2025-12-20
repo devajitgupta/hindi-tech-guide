@@ -34,7 +34,7 @@ export default async function MobileTipsLabels() {
                   src={
                     post.image
                       ? post.image.replace("s1600", "s600") 
-                      : "/default-og.jpg"
+                      : "/default-og.webp"
                   }
                   alt={post.title}
                   fill
