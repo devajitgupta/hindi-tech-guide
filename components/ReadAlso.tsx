@@ -15,12 +15,12 @@ export default function ReadAlso({ posts }: { posts: PostItem[] }) {
       </h2>
 
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {posts.map((post) => (
-          <Link
-            key={post.slug}
-            href={`/blog/${post.slug}`}
-            className="group block rounded-2xl border border-gray-200 dark:border-gray-700 p-5 shadow-sm hover:shadow-lg transition-all bg-white dark:bg-gray-900"
-          >
+       {posts.map((post, index) => (
+    <Link
+      key={post.slug ?? index} // fallback to index if slug is missing
+      href={`/blog/${post.slug ?? "#"}`}
+      className="group block rounded-2xl border border-gray-200 dark:border-gray-700 p-5 shadow-sm hover:shadow-lg transition-all bg-white dark:bg-gray-900"
+    >
             {/* Thumbnail */}
             <div className="overflow-hidden rounded-xl mb-4">
               <img

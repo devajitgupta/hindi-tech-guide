@@ -5,7 +5,7 @@ import { getPostsByLabel } from "@/lib/blogger"
 import { ArrowRight } from "lucide-react"
 
 export default async function MobileTipsLabels() {
-  const posts = await getPostsByLabel("Mobile Tips", 10)
+  const posts = await getPostsByLabel("Mobile Tips")
 
   if (!posts.length) return null
 
