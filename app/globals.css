@@ -117,6 +117,9 @@
 }
 
 @layer base {
+  html {
+    font-size: 17px; /* default 16px hota hai */
+  }
   * {
     @apply border-border outline-ring/50;
   }
