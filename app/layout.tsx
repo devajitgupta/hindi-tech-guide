@@ -7,9 +7,11 @@ import { Footer } from "@/components/layout/footer"
 import { OrganizationSchema } from "@/components/seo/json-ld"
 import "./globals.css"
 import Script from "next/script"
+import ConsentBanner from "@/components/ConsentBanner"
 
 const notoSansDevanagari = Noto_Sans_Devanagari({
   subsets: ["devanagari", "latin"],
+    weight: ["400", "700"], 
   display: "swap",
 })
 const geistMono = Geist_Mono({ subsets: ["latin"] })
@@ -134,10 +136,11 @@ export default function RootLayout({
 
         <meta name="google-adsense-account" content="ca-pub-5121018245734592" />
       </head>
-      <body className="flex min-h-screen flex-col font-sans antialiased">
+      <body className={`flex min-h-screen flex-col font-sans antialiased ${notoSansDevanagari.className} ${geistMono.className}`}>
         <Header />
         <main className="flex-1">{children}</main>
         <Footer />
+        <ConsentBanner />
         <Analytics />
       </body>
     </html>

@@ -31,7 +31,7 @@ export function OrganizationSchema({
     name,
     description,
     url,
-    logo: logo || `${url}/logo.png`,
+    logo: logo || `${url}/hinditechguide.png`,
     foundingDate: "2024",
     founder: {
       "@type": "Person",
@@ -115,9 +115,6 @@ export function WebPageSchema({
   )
 }
 
-/* ---------------------------------------------------------
- ✅ 4. ARTICLE SCHEMA (Blog post Schema)
----------------------------------------------------------- */
 interface ArticleSchemaProps {
   headline: string
   description: string
