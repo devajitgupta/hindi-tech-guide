@@ -6,6 +6,7 @@ import { Header } from "@/components/layout/header"
 import { Footer } from "@/components/layout/footer"
 import { OrganizationSchema } from "@/components/seo/json-ld"
 import "./globals.css"
+import Script from "next/script"
 
 const notoSansDevanagari = Noto_Sans_Devanagari({
   subsets: ["devanagari", "latin"],
@@ -93,7 +94,7 @@ export const metadata: Metadata = {
     ],
     apple: "/apple-icon.png",
   },
-    generator: 'v0.app'
+  generator: 'v0.app'
 }
 
 export default function RootLayout({
@@ -113,6 +114,25 @@ export default function RootLayout({
             jobTitle: "Engineer & Tech Writer",
           }}
         />
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-LZ7YYVR7LD"
+          strategy="afterInteractive"
+        />
+        <Script id="ga-init" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-LZ7YYVR7LD');
+          `}
+        </Script>
+        <Script
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5121018245734592"
+          crossOrigin="anonymous"
+          strategy="afterInteractive"
+        />
+
+        <meta name="google-adsense-account" content="ca-pub-5121018245734592" />
       </head>
       <body className="flex min-h-screen flex-col font-sans antialiased">
         <Header />

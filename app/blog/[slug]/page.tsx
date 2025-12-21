@@ -41,20 +41,20 @@ function processContentHTML(html: string): string {
 function extractImage(html: string): string | null {
   const imgRegex = /<img[^>]+src="([^">]+)"[^>]*>/i
   const match = html.match(imgRegex)
-  
+
   if (match && match[1]) {
     let src = match[1].trim()
-    
+
     if (src.startsWith('/')) {
       src = `https://www.hinditechguide.com${src}`
     }
-    
+
     if (src.includes('blogger.googleusercontent.com') && !src.startsWith('https://')) {
       src = src.replace('http://', 'https://')
     }
     return src
   }
-  
+
   return null
 }
 
@@ -65,13 +65,13 @@ export async function generateMetadata({ params }: PageProps) {
   if (!post) return {};
 
   const base = "https://www.hinditechguide.com";
-  
+
   const rawDescription = post.content.replace(/<[^>]+>/g, "").trim()
-  const description = rawDescription.length > 150 
+  const description = rawDescription.length > 150
     ? rawDescription.slice(0, 150) + "..."
     : rawDescription;
-  
-  let ogImage = null;  
+
+  let ogImage = null;
   const contentImage = extractImage(post.content)
   if (contentImage) {
     ogImage = contentImage
@@ -140,23 +140,23 @@ export default async function BlogPostPage({ params }: PageProps) {
   function getContentImage(html: string): string {
     const imgRegex = /<img[^>]+src="([^">]+)"[^>]*>/i
     const match = html.match(imgRegex)
-    
+
     if (match && match[1]) {
       let src = match[1].trim()
-      
+
       // Remove protocol and domain for Next.js Image component
       if (src.startsWith('https://')) {
         src = src.replace('https://www.hinditechguide.com', '')
       }
-      
+
       return src
     }
-    
+
     return "/default-og.webp"
   }
 
   const contentImage = getContentImage(post.content)
-  
+
   function removeFirstImage(html: string): string {
     return html.replace(/<img[^>]+>/i, '');
   }
@@ -245,16 +245,19 @@ export default async function BlogPostPage({ params }: PageProps) {
 
         {/* Featured Image */}
         {contentImage !== "/default-og.webp" && (
-          <div className="relative w-full h-[400px] mb-8 rounded-xl overflow-hidden">
+          <div className="relative w-full aspect-video mb-8 rounded-xl overflow-hidden">
             <Image
               src={contentImage}
               alt={post.title}
               fill
               className="object-cover"
               priority
-              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 1200px"
+              sizes="(max-width: 640px) 100vw,
+           (max-width: 1024px) 90vw,
+           800px"
             />
           </div>
+
         )}
 
         <div
@@ -273,7 +276,7 @@ export default async function BlogPostPage({ params }: PageProps) {
             [&_hr]:my-8 [&_hr]:border-border"
           dangerouslySetInnerHTML={{ __html: processedContent }}
         />
-        <SocialShare title={"Social"}/>
+        <SocialShare title={"Social"} />
         <ReadAlso posts={relatedPosts} />
         <LatestPosts posts={latestPosts} />
 
