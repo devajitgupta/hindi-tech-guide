@@ -11,6 +11,7 @@ import '../blog-post.css'
 import ReadAlso from "@/components/ReadAlso"
 import LatestPosts from "@/components/LatestPosts"
 import SocialShare from "@/components/SocialShare"
+import AuthorCard from "@/components/AuthorCard"
 
 interface PageProps {
   params: { slug: string } | Promise<{ slug: string }>
@@ -279,6 +280,19 @@ export default async function BlogPostPage({ params }: PageProps) {
         <SocialShare title={"Social"} />
         <ReadAlso posts={relatedPosts} />
         <LatestPosts posts={latestPosts} />
+        <AuthorCard
+          name="Ajit Gupta"
+          bio="Tech blogger, developer, and digital marketing enthusiast. Sharing tips and tutorials in Hindi."
+          avatar="/ajit-hinditechguide.jpg"
+          social={{
+            email: "hinditechguides@gmail.com",
+            twitter: "https://twitter.com/hinditechguide",
+            linkedin: "https://linkedin.com/in/ajitgupta50",
+            github: "https://github.com/devajitgupta",
+            instagram: "https://instagram.com/ajitgupta50",
+          }}
+        />
+
 
       </article>
     </>

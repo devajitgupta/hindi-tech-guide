@@ -1,4 +1,3 @@
-// app/blog/not-found.tsx
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { FileQuestion } from "lucide-react"

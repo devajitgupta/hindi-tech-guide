@@ -8,6 +8,7 @@ import { OrganizationSchema } from "@/components/seo/json-ld"
 import "./globals.css"
 import Script from "next/script"
 import ConsentBanner from "@/components/ConsentBanner"
+import MotionProvider from "@/components/MotionProvider"
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://hinditechguide.com"),
@@ -131,7 +132,9 @@ export default function RootLayout({
       </head>
       <body>
         <Header />
+        <MotionProvider>
         <main className="flex-1">{children}</main>
+        </MotionProvider>
         <Footer />
         <ConsentBanner />
         <Analytics />
