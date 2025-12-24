@@ -18,7 +18,7 @@ function extractFirstImage(html: string) {
 
 // -------------------- Generic Functions -------------------- //
 
-export async function getAllPosts(blogType: "main" | "auto" = "main", limit: number = 20) {
+export async function getAllPosts(blogType: "main" | "auto" = "main", limit: number = 50) {
   const res = await fetch(`${getBaseUrl(blogType)}/posts?key=${API_KEY}&maxResults=${limit}`, {
     next: { revalidate: 3600 },
   });
@@ -57,7 +57,7 @@ export async function getLatestPosts(blogType: "main" | "auto" = "main", limit: 
   }));
 }
 
-export async function getPostsByLabel(label: string, blogType: "main" | "auto" = "main", limit: number = 20) {
+export async function getPostsByLabel(label: string, blogType: "main" | "auto" = "main", limit: number = 50) {
   const apiUrl = `${getBaseUrl(blogType)}/posts?labels=${encodeURIComponent(label)}&maxResults=${limit}&key=${API_KEY}`;
   const res = await fetch(apiUrl, { next: { revalidate: 3600 } });
   if (!res.ok) return [];
