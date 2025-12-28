@@ -103,3 +103,60 @@ export function extractLabels(posts: any[]) {
   });
   return Array.from(labelsSet);
 }
+type RelatedPost = {
+  title: string;
+  slug: string;
+};
+
+export function injectReadAlso(
+  htmlContent: string,
+  relatedPosts: RelatedPost[],
+  limit: number = 3
+): string {
+  if (!relatedPosts || relatedPosts.length === 0) return htmlContent;
+
+  // Prevent duplicate injection
+  if (htmlContent.includes('id="read-also-block"')) return htmlContent;
+
+  const linksToShow = relatedPosts.slice(0, limit);
+  
+  // Create the HTML Block
+  const readAlsoHtml = `
+    <div id="read-also-block" class="my-8 rounded-xl border-l-4 border-blue-600 bg-muted/30 p-6 not-prose">
+      <h3 class="mb-3 text-lg font-bold flex items-center gap-2">
+        <span class="bg-blue-600 text-white px-2 py-0.5 rounded text-xs uppercase tracking-wider">Must Read</span>
+        इसे भी पढ़ें / Read Also
+      </h3>
+      <ul class="space-y-2 list-none m-0 p-0">
+        ${linksToShow
+          .map(
+            (post) => `
+          <li class="p-0 m-0">
+            <a href="/blog/${post.slug}" class="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 font-medium transition-colors underline-offset-4 hover:underline decoration-blue-600/30">
+              ${post.title}
+            </a>
+          </li>
+        `
+          )
+          .join("")}
+      </ul>
+    </div>
+  `;
+
+  // Injection Rules
+  const h2Match = htmlContent.match(/<\/h2>/i);
+  const pMatch = htmlContent.match(/<\/p>/i);
+
+  if (h2Match) {
+    // Insert after the first </h2>
+    const index = h2Match.index! + h2Match[0].length;
+    return htmlContent.slice(0, index) + readAlsoHtml + htmlContent.slice(index);
+  } else if (pMatch) {
+    // Fallback: Insert after the first </p>
+    const index = pMatch.index! + pMatch[0].length;
+    return htmlContent.slice(0, index) + readAlsoHtml + htmlContent.slice(index);
+  }
+
+  // If no tags found, append to start
+  return readAlsoHtml + htmlContent;
+}

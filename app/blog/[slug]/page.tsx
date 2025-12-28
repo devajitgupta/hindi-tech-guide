@@ -6,7 +6,7 @@ import { ArticleSchema, BreadcrumbSchema } from "@/components/seo/json-ld"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
-import { getAllSlugs, getLatestPosts, getPostBySlug, getRelatedPosts } from "@/lib/blogger"
+import { getAllSlugs, getLatestPosts, getPostBySlug, getRelatedPosts, injectReadAlso } from "@/lib/blogger"
 import '../blog-post.css'
 import ReadAlso from "@/components/ReadAlso"
 import LatestPosts from "@/components/LatestPosts"
@@ -164,6 +164,7 @@ export default async function BlogPostPage({ params }: PageProps) {
 
   // Process the content to remove problematic styling
   const processedContent = removeFirstImage(processContentHTML(post.content));
+  const finalContent = injectReadAlso(processedContent, relatedPosts, 3);
   const latestPosts = await getLatestPosts();
 
   return (
@@ -275,8 +276,7 @@ export default async function BlogPostPage({ params }: PageProps) {
             prose-a:text-blue-600 prose-a:no-underline hover:prose-a:underline
             prose-img:rounded-lg prose-img:shadow-md
             [&_hr]:my-8 [&_hr]:border-border"
-          dangerouslySetInnerHTML={{ __html: processedContent }}
-        />
+          dangerouslySetInnerHTML={{ __html: finalContent }} />
         <SocialShare title={"Social"} />
         <ReadAlso posts={relatedPosts} />
         <LatestPosts posts={latestPosts} />
