@@ -125,7 +125,7 @@ export function injectReadAlso(
     <div id="read-also-block" class="my-8 rounded-xl border-l-4 border-blue-600 bg-muted/30 p-6 not-prose">
       <h3 class="mb-3 text-lg font-bold flex items-center gap-2">
         <span class="bg-blue-600 text-white px-2 py-0.5 rounded text-xs uppercase tracking-wider">Must Read</span>
-        इसे भी पढ़ें / Read Also
+        इसे भी पढ़ें 
       </h3>
       <ul class="space-y-2 list-none m-0 p-0">
         ${linksToShow
