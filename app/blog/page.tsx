@@ -116,7 +116,7 @@ export default async function BlogPage() {
                       alt={post.title}
                       fill
                       placeholder="blur"
-                      blurDataURL="/blur-placeholder.png"
+                      blurDataURL="/blur-placeholder.webp"
                       priority={i < 2} 
                       sizes="(max-width: 640px) 100vw,
                              (max-width: 1024px) 50vw,

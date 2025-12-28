@@ -40,7 +40,7 @@ export default async function MobileTipsLabels() {
                   fill
                   priority={false}
                   placeholder="blur"
-                  blurDataURL="/blur-placeholder.png"
+                  blurDataURL="/blur-placeholder.webp"
                   sizes="(max-width: 640px) 100vw,
          (max-width: 1024px) 50vw,
          25vw"

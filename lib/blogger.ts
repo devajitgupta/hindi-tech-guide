@@ -18,16 +18,16 @@ function extractFirstImage(html: string) {
 
 // -------------------- Generic Functions -------------------- //
 
-export async function getAllPosts(blogType: "main" | "auto" = "main", limit: number = 50) {
+export async function getAllPosts(blogType: "main" | "auto" = "main", limit: number = 500) {
   const res = await fetch(`${getBaseUrl(blogType)}/posts?key=${API_KEY}&maxResults=${limit}`, {
-    next: { revalidate: 3600 },
+    cache: "no-store",
   });
   const data = await res.json();
   return data.items || [];
 }
 
 export async function getPostBySlug(slug: string, blogType: "main" | "auto" = "main") {
-  const posts = await getAllPosts(blogType, 50);
+  const posts = await getAllPosts(blogType, 500);
   return posts.find((p: any) => {
     const urlSlug = p.url.split("/").pop()?.replace(".html", "");
     return urlSlug === slug;
@@ -35,7 +35,7 @@ export async function getPostBySlug(slug: string, blogType: "main" | "auto" = "m
 }
 
 export async function getAllSlugs(blogType: "main" | "auto" = "main") {
-  const posts = await getAllPosts(blogType, 50);
+  const posts = await getAllPosts(blogType, 500);
   return posts.map((post: any) => ({ slug: post.url.split("/").pop()?.replace(".html", "") }));
 }
 
@@ -57,9 +57,9 @@ export async function getLatestPosts(blogType: "main" | "auto" = "main", limit: 
   }));
 }
 
-export async function getPostsByLabel(label: string, blogType: "main" | "auto" = "main", limit: number = 50) {
+export async function getPostsByLabel(label: string, blogType: "main" | "auto" = "main", limit: number = 500) {
   const apiUrl = `${getBaseUrl(blogType)}/posts?labels=${encodeURIComponent(label)}&maxResults=${limit}&key=${API_KEY}`;
-  const res = await fetch(apiUrl, { next: { revalidate: 3600 } });
+  const res = await fetch(apiUrl );
   if (!res.ok) return [];
   const data = await res.json();
   return (data.items || []).map((post: any) => ({
