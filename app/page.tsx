@@ -1,41 +1,75 @@
 import type { Metadata } from "next"
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
 import { WebPageSchema, BreadcrumbSchema } from "@/components/seo/json-ld"
-import { ArrowRight, BookOpen, Lightbulb, TrendingUp, Code2, Smartphone, Globe } from "lucide-react"
-import MobileTipsLabels from "@/components/Mobile-tips"
+import { getPostsByLabel } from "@/lib/blogger"
+import LabelPostSection from "@/components/Mobile-tips"
+
 export const metadata: Metadata = {
-  title: "Home - हिंदी में तकनीकी गाइड और ट्यूटोरियल",
-  description:
-    "HindiTechGuide पर आपका स्वागत है। भारतीय टेक्नोलॉजी उत्साही लोगों के लिए हिंदी में व्यापक तकनीकी गाइड, ट्यूटोरियल और नवीनतम टेक समाचार।",
+  title: "HindiTechGuide - हिंदी में तकनीकी गाइड और ट्यूटोरियल",
+  description: "भारतीय टेक्नोलॉजी उत्साही लोगों के लिए हिंदी में व्यापक तकनीकी गाइड, ट्यूटोरियल और नवीनतम टेक समाचार।",
 }
-export default function HomePage() {
+
+export default async function HomePage() {
+  const [mobileTips, aiPosts, techNews, mobileReviews] = await Promise.all([
+    getPostsByLabel("Mobile Tips"),
+    getPostsByLabel("AI"),
+    getPostsByLabel("Tech News"),
+    getPostsByLabel("How To"),
+  ])
+
   return (
     <>
       <WebPageSchema
-        name="HindiTechGuide - Home पेज"
-        description="भारतीय टेक्नोलॉजी उत्साही लोगों के लिए हिंदी में तकनीकी गाइड और ट्यूटोरियल"
+        name="HindiTechGuide - Home"
+        description="भारतीय टेक्नोलॉजी उत्साही लोगों के लिए हिंदी में तकनीकी गाइड"
         url="https://hinditechguide.com"
       />
       <BreadcrumbSchema items={[{ name: "Home", url: "https://hinditechguide.com" }]} />
-     <section className="py-5 md:py-6">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-           <MobileTipsLabels/>
+      <main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        
+        {/* Sections based on Labels */}
+        <div className="space-y-12 py-10">
+          <LabelPostSection
+            title="📱 Mobile Tips & Tricks"
+            description="अपने स्मार्टफोन को बेहतर बनाने के सीक्रेट टिप्स।"
+            posts={mobileTips}
+            viewAllLink="/label/mobile-tips"
+          />
+
+          <LabelPostSection
+            title="🤖 Artificial Intelligence"
+            description="AI की दुनिया और ChatGPT के बेहतरीन इस्तेमाल।"
+            posts={aiPosts}
+            viewAllLink="/label/ai"
+          />
+
+          <LabelPostSection
+            title="📰 Tech News"
+            description="टेक्नोलॉजी की दुनिया की ताज़ा ख़बरें।"
+            posts={techNews}
+            viewAllLink="/label/tech-news"
+          />
+
+          <LabelPostSection
+            title="📲 How To Guides"
+            description="कठिन तकनीकी चीज़ों को आसान भाषा में सीखें।"
+            posts={mobileReviews}
+            viewAllLink="/label/how-to"
+          />
         </div>
-      </section>
-      <section className="py-16 md:py-24">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="font-bold text-3xl text-balance md:text-4xl mb-4">हम क्या प्रदान करते हैं</h2>
-            <p className="text-lg text-muted-foreground text-pretty mx-auto max-w-2xl">
-              HindiTechGuide पर आपको मिलेंगे विभिन्न तकनीकी विषयों पर गुणवत्ता पूर्ण लेख और गाइड
+
+        {/* Info Section */}
+        <section className="py-16 border-t">
+          <div className="text-center">
+            <h2 className="font-bold text-3xl md:text-4xl mb-4 text-slate-900 dark:text-white">
+              हम क्या प्रदान करते हैं
+            </h2>
+            <p className="text-lg text-muted-foreground mx-auto max-w-2xl leading-relaxed">
+              HindiTechGuide पर आपको मोबाइल रिव्यु, सॉफ्टवेयर गाइड, और इंटरनेट सिक्योरिटी से जुड़े 
+              गुणवत्ता पूर्ण लेख मिलेंगे।
             </p>
           </div>
-
-        </div>
-      </section>
+        </section>
+      </main>
     </>
   )
 }

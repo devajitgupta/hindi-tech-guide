@@ -1,6 +1,6 @@
 import Link from "next/link"
 import Image from "next/image"
-import { Calendar, Clock, Tag } from "lucide-react"
+import { Calendar, Clock, RefreshCcw, Tag } from "lucide-react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { WebPageSchema, BreadcrumbSchema } from "@/components/seo/json-ld"
@@ -48,18 +48,21 @@ export default async function BlogPage() {
     const slug = post.url.split("/").pop()?.replace(".html", "") || ""
     const cleanText = cleanHtmlText(post.content || "")
     const description = cleanText.slice(0, 150) + "..."
-      const rawImage = extractImage(post.content)
+    const rawImage = extractImage(post.content)
     const optimizedImage = rawImage
-      ? rawImage.replace("s1600", "s600") 
+      ? rawImage.replace("s1600", "s600")
       : "/default-og.webp"
     function extractImage(html: string): string | null {
       const match = html.match(/<img[^>]+src="([^">]+)"/)
       return match ? match[1] : null
     }
+    // Dates Logic
+    const publishDate = new Date(post.published)
+    const updateDate = new Date(post.updated)
+    const isUpdated = updateDate.getTime() > publishDate.getTime() + 86400000
 
     const image = extractImage(post.content)
     const category = post.labels?.[0] || "General"
-    const tags = post.labels?.slice(1) || []
     const readTime = Math.ceil(cleanText.split(" ").length / 200) + " min read"
 
     return {
@@ -67,9 +70,10 @@ export default async function BlogPage() {
       title: post.title + " | HindiTechGuide",
       description,
       category,
-      tags,
-      readTime,
-      date: post.published,
+      tags: post.labels || [], readTime,
+      publishedDate: post.published,
+      updatedDate: post.updated,
+      isUpdated, 
       image: optimizedImage,
     }
   })
@@ -89,87 +93,75 @@ export default async function BlogPage() {
         ]}
       />
 
-      <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-
-        {/* Header */}
+     <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
         <div className="mb-12 text-center">
-          <h1 className="text-4xl font-bold sm:text-5xl lg:text-6xl">हमारा Blog</h1>
+          <h1 className="text-4xl font-bold sm:text-5xl tracking-tight">हमारा लेटेस्ट Blog</h1>
           <p className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto">
-            नवीनतम तकनीक और ट्यूटोरियल हिंदी में।
+            लेटेस्ट टेक्नोलॉजी, मोबाइल टिप्स और ऑनलाइन सुरक्षा के बारे में विस्तार से जानें।
           </p>
         </div>
 
-        {/* Posts Grid */}
         <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
           {posts.map((post: any, i: number) => (
-              <article
-                key={post.slug}
-                className="group block"
-                itemScope
-                itemType="https://schema.org/BlogPosting"
-              >
-              <Link href={`/blog/${post.slug}`} className="block">
-                <Card className="h-full overflow-hidden transition-shadow hover:shadow-lg">
+            <article key={post.slug} className="group flex flex-col" itemScope itemType="https://schema.org/BlogPosting">
+              <Link href={`/blog/${post.slug}`} className="flex-1">
+                <Card className="h-full border-none shadow-sm hover:shadow-xl transition-all duration-300 rounded-2xl overflow-hidden bg-card">
+                  {/* Image Container */}
                   <div className="relative aspect-video overflow-hidden">
                     <Image
                       src={post.image}
                       alt={post.title}
                       fill
-                      placeholder="blur"
-                      blurDataURL="/blur-placeholder.webp"
-                      priority={i < 2} 
-                      sizes="(max-width: 640px) 100vw,
-                             (max-width: 1024px) 50vw,
-                             33vw"
-                      className="object-cover transition-transform group-hover:scale-105"
+                      priority={i < 3}
+                      sizes="(max-width: 768px) 100vw, 33vw"
+                      className="object-cover transition-transform duration-500 group-hover:scale-105"
                     />
+                    <div className="absolute top-3 left-3 flex gap-2">
+                       <Badge className="bg-white/90 text-black hover:bg-white border-none backdrop-blur-sm">
+                         {post.category}
+                       </Badge>
+                       {post.isUpdated && (
+                         <Badge variant="secondary" className="bg-primary text-primary-foreground border-none">
+                           Updated
+                         </Badge>
+                       )}
+                    </div>
                   </div>
 
-                  {/* Blog Card Header */}
-                  <CardHeader>
-                    <Badge variant="secondary">{post.category}</Badge>
-                    <CardTitle className="line-clamp-2 mt-2" itemProp="headline">
+                  <CardHeader className="pt-6">
+                    <CardTitle className="text-xl leading-tight group-hover:text-primary transition-colors" itemProp="headline">
                       {post.title}
                     </CardTitle>
-                    <CardDescription className="line-clamp-3" itemProp="description">
+                    <CardDescription className="mt-3 line-clamp-3 text-base leading-relaxed" itemProp="description">
                       {post.description}
                     </CardDescription>
                   </CardHeader>
 
-                  {/* Card Content */}
-                  <CardContent>
-                    <div className="flex items-center gap-4 text-sm text-muted-foreground">
-
-                      {/* Date */}
-                      <div className="flex items-center gap-1">
-                        <Calendar className="h-4 w-4" />
-                        <time itemProp="datePublished">
-                          {new Date(post.date).toLocaleDateString("hi-IN", {
-                            year: "numeric",
-                            month: "long",
+                  <CardContent className="mt-auto">
+                    {/* Date & Read Time Row */}
+                    <div className="flex flex-wrap items-center gap-4 text-xs font-medium text-muted-foreground mb-4">
+                      <div className="flex items-center gap-1.5">
+                        {post.isUpdated ? <RefreshCcw className="h-3.5 w-3.5" /> : <Calendar className="h-3.5 w-3.5" />}
+                        <time dateTime={post.publishedDate}>
+                          {new Date(post.isUpdated ? post.updatedDate : post.publishedDate).toLocaleDateString("hi-IN", {
                             day: "numeric",
+                            month: "short",
+                            year: "numeric"
                           })}
                         </time>
                       </div>
-
-                      {/* Read Time */}
-                      <div className="flex items-center gap-1">
-                        <Clock className="h-4 w-4" />
+                      <div className="flex items-center gap-1.5">
+                        <Clock className="h-3.5 w-3.5" />
                         <span>{post.readTime}</span>
                       </div>
                     </div>
 
-                    {/* Tags */}
-                    <div className="mt-4 flex flex-wrap gap-2">
-                      {post.tags.slice(0, 3).map((tag: any) => (
-                        <div
-                          key={tag}
-                          className="flex items-center gap-1 text-xs text-muted-foreground"
-                          itemProp="keywords"
-                        >
-                          <Tag className="h-3 w-3" />
-                          <span>{tag}</span>
-                        </div>
+                    {/* Tags List */}
+                    <div className="flex flex-wrap gap-2 border-t pt-4">
+                      {post.tags.slice(0, 3).map((tag: string) => (
+                        <span key={tag} className="inline-flex items-center gap-1 text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
+                          <Tag className="h-3 w-3" /> {tag}
+                        </span>
                       ))}
                     </div>
                   </CardContent>
@@ -177,7 +169,6 @@ export default async function BlogPage() {
               </Link>
             </article>
           ))}
-
         </div>
       </div>
     </>

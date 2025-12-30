@@ -1,13 +1,13 @@
 const BLOG_ID = process.env.BLOG_ID!;
-const BLOG_AUTO_ID = process.env.BLOG_AUTO_ID!;
+const BLOG_techNews_ID = process.env.BLOG_techNews_ID!;
 const API_KEY = process.env.BLOGGER_API_KEY!;
 
 const BLOGS = {
   main: `https://www.googleapis.com/blogger/v3/blogs/${BLOG_ID}`,
-  auto: `https://www.googleapis.com/blogger/v3/blogs/${BLOG_AUTO_ID}`,
+  techNews: `https://www.googleapis.com/blogger/v3/blogs/${BLOG_techNews_ID}`,
 };
 
-function getBaseUrl(blogType: "main" | "auto") {
+function getBaseUrl(blogType: "main" | "techNews") {
   return BLOGS[blogType];
 }
 
@@ -18,7 +18,7 @@ function extractFirstImage(html: string) {
 
 // -------------------- Generic Functions -------------------- //
 
-export async function getAllPosts(blogType: "main" | "auto" = "main", limit: number = 500) {
+export async function getAllPosts(blogType: "main" | "techNews" = "main", limit: number = 500) {
   const res = await fetch(`${getBaseUrl(blogType)}/posts?key=${API_KEY}&maxResults=${limit}`, {
     cache: "no-store",
   });
@@ -26,7 +26,7 @@ export async function getAllPosts(blogType: "main" | "auto" = "main", limit: num
   return data.items || [];
 }
 
-export async function getPostBySlug(slug: string, blogType: "main" | "auto" = "main") {
+export async function getPostBySlug(slug: string, blogType: "main" | "techNews" = "main") {
   const posts = await getAllPosts(blogType, 500);
   return posts.find((p: any) => {
     const urlSlug = p.url.split("/").pop()?.replace(".html", "");
@@ -34,12 +34,12 @@ export async function getPostBySlug(slug: string, blogType: "main" | "auto" = "m
   }) || null;
 }
 
-export async function getAllSlugs(blogType: "main" | "auto" = "main") {
+export async function getAllSlugs(blogType: "main" | "techNews" = "main") {
   const posts = await getAllPosts(blogType, 500);
   return posts.map((post: any) => ({ slug: post.url.split("/").pop()?.replace(".html", "") }));
 }
 
-export async function getLatestPosts(blogType: "main" | "auto" = "main", limit: number = 3) {
+export async function getLatestPosts(blogType: "main" | "techNews" = "main", limit: number = 3) {
   const res = await fetch(
     `${getBaseUrl(blogType)}/posts?key=${API_KEY}&maxResults=${limit}&orderBy=published`,
     { next: { revalidate: 1800 } }
@@ -57,7 +57,7 @@ export async function getLatestPosts(blogType: "main" | "auto" = "main", limit: 
   }));
 }
 
-export async function getPostsByLabel(label: string, blogType: "main" | "auto" = "main", limit: number = 500) {
+export async function getPostsByLabel(label: string, blogType: "main" | "techNews" = "main", limit: number = 500) {
   const apiUrl = `${getBaseUrl(blogType)}/posts?labels=${encodeURIComponent(label)}&maxResults=${limit}&key=${API_KEY}`;
   const res = await fetch(apiUrl );
   if (!res.ok) return [];
@@ -70,8 +70,14 @@ export async function getPostsByLabel(label: string, blogType: "main" | "auto" =
     date: post.published,
   }));
 }
+export const LABEL_MAP: Record<string, string> = {
+  "mobile-tips": "Mobile Tips",
+  "ai": "AI",
+  "tech-news": "Tech News",
+  "mobile-review": "Mobile Review",
+}
 
-export async function getRelatedPosts(currentSlug: string, labels: string[], blogType: "main" | "auto" = "main") {
+export async function getRelatedPosts(currentSlug: string, labels: string[], blogType: "main" | "techNews" = "main") {
   if (!labels || labels.length === 0) return await getAllPosts(blogType, 4);
   const labelString = labels.join(",");
   const maxResults = 5;

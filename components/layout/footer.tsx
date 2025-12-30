@@ -6,6 +6,7 @@ export function Footer() {
     <footer className="bg-gradient-to-t from-gray-100 dark:from-gray-900 border-t border-gray-200 dark:border-gray-700">
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
         <div className="grid gap-8 sm:grid-cols-2 md:grid-cols-4">
+          
           {/* Logo & Description */}
           <div className="space-y-4 flex flex-col">
             <div className="flex items-center gap-2">
@@ -15,13 +16,15 @@ export function Footer() {
               <span className="text-xl font-bold">HindiTechGuide</span>
             </div>
             <p className="text-sm text-muted-foreground">
-              भारतीय टेक्नोलॉजी उत्साही लोगों के लिए हिंदी में तकनीकी गाइड और ट्यूटोरियल।
+              Technology guides, tutorials, and latest tech updates in simple English for tech enthusiasts.
             </p>
           </div>
 
           {/* Quick Links */}
           <div>
-            <h3 className="mb-4 font-semibold text-lg text-gray-800 dark:text-gray-200">त्वरित लिंक</h3>
+            <h3 className="mb-4 font-semibold text-lg text-gray-800 dark:text-gray-200">
+              Quick Links
+            </h3>
             <ul className="space-y-2 text-sm">
               <li>
                 <Link href="/" className="hover:text-blue-600 transition-colors duration-300">
@@ -40,7 +43,7 @@ export function Footer() {
               </li>
               <li>
                 <Link href="/author" className="hover:text-blue-600 transition-colors duration-300">
-                  लेखक
+                  Authors
                 </Link>
               </li>
             </ul>
@@ -48,21 +51,23 @@ export function Footer() {
 
           {/* Legal Links */}
           <div>
-            <h3 className="mb-4 font-semibold text-lg text-gray-800 dark:text-gray-200">कानूनी</h3>
+            <h3 className="mb-4 font-semibold text-lg text-gray-800 dark:text-gray-200">
+              Legal
+            </h3>
             <ul className="space-y-2 text-sm">
               <li>
                 <Link href="/privacy" className="hover:text-blue-600 transition-colors duration-300">
-                  गोपनीयता नीति
+                  Privacy Policy
                 </Link>
               </li>
               <li>
                 <Link href="/terms" className="hover:text-blue-600 transition-colors duration-300">
-                  नियम और शर्तें
+                  Terms & Conditions
                 </Link>
               </li>
               <li>
                 <Link href="/contact" className="hover:text-blue-600 transition-colors duration-300">
-                  संपर्क करें
+                  Contact Us
                 </Link>
               </li>
             </ul>
@@ -70,7 +75,9 @@ export function Footer() {
 
           {/* Social Links */}
           <div>
-            <h3 className="mb-4 font-semibold text-lg text-gray-800 dark:text-gray-200">हमसे जुड़ें</h3>
+            <h3 className="mb-4 font-semibold text-lg text-gray-800 dark:text-gray-200">
+              Connect With Us
+            </h3>
             <div className="flex gap-4">
               <Link href="#" className="p-2 rounded-full bg-blue-600 text-white hover:bg-blue-700 transition-colors duration-300">
                 <Facebook className="h-5 w-5" />
@@ -95,7 +102,12 @@ export function Footer() {
         {/* Footer Bottom */}
         <div className="mt-12 border-t border-gray-200 dark:border-gray-700 pt-6 flex flex-col sm:flex-row justify-between items-center text-sm text-muted-foreground gap-2">
           <p>© {new Date().getFullYear()} HindiTechGuide. All rights reserved.</p>
-          <p>Created by <Link href="https://hinditechguide.com" className="text-blue-600 hover:underline">Ajit Gupta</Link></p>
+          <p>
+            Created by{" "}
+            <Link href="https://hinditechguide.com" className="text-blue-600 hover:underline">
+              Ajit Gupta
+            </Link>
+          </p>
         </div>
       </div>
     </footer>

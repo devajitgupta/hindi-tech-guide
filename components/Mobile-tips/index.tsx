@@ -1,28 +1,37 @@
 import Link from "next/link"
 import Image from "next/image"
+import { ArrowRight, Tag } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
-import { getPostsByLabel } from "@/lib/blogger"
-import { ArrowRight } from "lucide-react"
 
-export default async function MobileTipsLabels() {
-  const posts = await getPostsByLabel("Mobile Tips")
+type Props = {
+  title: string
+  description?: string
+  posts: any[]
+  viewAllLink?: string
+}
 
-  if (!posts.length) return null
-
+export default function LabelPostSection({
+  title,
+  description,
+  posts,
+  viewAllLink,
+}: Props) {
+  if (!posts?.length) return null
   return (
-    <div>
-      <div className="p-2 text-center">
-        <h2 className="text-3xl font-bold sm:text-4xl">
-          📱 मोबाइल टिप्स & ट्रिक्स
-        </h2>
-        <p className="mt-3 text-muted-foreground max-w-2xl mx-auto">
-          अपने स्मार्टफोन को तेज, सुरक्षित और लंबे समय तक चलाने के आसान टिप्स – हिंदी में।
-        </p>
+    <section className="py-12">
+      {/* Header */}
+      <div className="mb-8 text-center">
+        <h2 className="text-3xl font-bold sm:text-4xl">{title}</h2>
+        {description && (
+          <p className="mt-3 text-muted-foreground max-w-2xl mx-auto">
+            {description}
+          </p>
+        )}
       </div>
 
       {/* Posts Grid */}
       <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-        {posts.map((post: any) => (
+        {posts.slice(0, 4).map((post: any) => (
           <Link
             key={post.slug}
             href={`/blog/${post.slug}`}
@@ -33,26 +42,18 @@ export default async function MobileTipsLabels() {
                 <Image
                   src={
                     post.image
-                      ? post.image.replace("s1600", "s600") 
+                      ? post.image.replace("s1600", "s600")
                       : "/default-og.webp"
                   }
                   alt={post.title}
                   fill
-                  priority={false}
-                  placeholder="blur"
-                  blurDataURL="/blur-placeholder.webp"
-                  sizes="(max-width: 640px) 100vw,
-         (max-width: 1024px) 50vw,
-         25vw"
+                  sizes="(max-width:768px) 100vw, 25vw"
                   className="object-cover transition-transform duration-300 group-hover:scale-105"
                 />
-
-                <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
               </div>
-              <div className="h-1 w-full bg-gradient-to-r from-primary to-purple-500" />
 
               <CardHeader>
-                <CardTitle className="line-clamp-2 text-lg leading-snug group-hover:text-primary transition-colors">
+                <CardTitle className="line-clamp-2 group-hover:text-primary transition-colors">
                   {post.title}
                 </CardTitle>
                 <CardDescription className="line-clamp-3">
@@ -61,15 +62,26 @@ export default async function MobileTipsLabels() {
               </CardHeader>
 
               <CardContent>
-                <div className="flex items-center justify-between text-sm font-medium text-primary">
-                  <span>पूरा पढ़ें</span>
-                  <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-                </div>
+                <span className="inline-flex items-center gap-1 text-sm text-primary font-medium">
+                  Read Full Article <ArrowRight className="h-4 w-4" />
+                </span>
               </CardContent>
             </Card>
           </Link>
         ))}
       </div>
-    </div>
+
+      {/* View All */}
+      {viewAllLink && (
+        <div className="mt-8 text-center">
+          <Link
+            href={viewAllLink}
+            className="inline-flex items-center gap-2 text-primary font-medium hover:underline"
+          >
+            View All Articles <ArrowRight className="h-4 w-4" />
+          </Link>
+        </div>
+      )}
+    </section>
   )
 }

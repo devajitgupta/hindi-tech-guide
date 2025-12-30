@@ -25,7 +25,7 @@ interface PageProps {
 /* ---------- SSG ---------- */
 
 export async function generateStaticParams() {
-  return await getAllSlugs("auto") // fetch slugs from Auto Blog
+  return await getAllSlugs("techNews") 
 }
 
 /* ---------- Helpers ---------- */
@@ -53,16 +53,16 @@ function extractImage(html: string): string | null {
 
 export async function generateMetadata({ params }: PageProps) {
   const { slug } = await params
-  const post = await getPostBySlug(slug, "auto") // Auto Blog
+  const post = await getPostBySlug(slug, "techNews") // Auto Blog
   if (!post) return {}
 
   const base = "https://hinditechguide.com"
-  const url = `${base}/auto/${slug}`
+  const url = `${base}/tech/${slug}`
   const description = post.content.replace(/<[^>]+>/g, "").slice(0, 150) + "..."
-  const ogImage = extractImage(post.content) || post.images?.[0]?.url || `${base}/auto-default.webp`
+  const ogImage = extractImage(post.content) || post.images?.[0]?.url || `${base}/tech-default.webp`
 
   return {
-    title: `${post.title} | Auto News`,
+    title: `${post.title} | Tech News`,
     description,
     alternates: { canonical: url },
     openGraph: {
@@ -88,19 +88,18 @@ export async function generateMetadata({ params }: PageProps) {
 
 /* ---------- Page ---------- */
 
-export default async function AutoPostPage({ params }: PageProps) {
+export default async function TechPostPage({ params }: PageProps) {
   const { slug } = await params
-  const post = await getPostBySlug(slug, "auto") // Auto Blog
+  const post = await getPostBySlug(slug, "techNews") 
   if (!post) notFound()
 
-  const relatedPosts = await getRelatedPosts(slug, post.labels, "auto")
-  const latestPosts = await getLatestPosts("auto")
-
+  const relatedPosts = await getRelatedPosts(slug, post.labels, "techNews")
+  const latestPosts = await getLatestPosts("techNews")
   const description = post.content.replace(/<[^>]+>/g, "").slice(0, 150) + "..."
-  const category = post.labels?.[0] || "Auto News"
+  const category = post.labels?.[0] || "Tech News"
   const tags = post.labels?.slice(1) || []
   const readTime = calculateReadingTime(post.content)
-  const featuredImage = extractImage(post.content) || "/auto-default.webp"
+  const featuredImage = extractImage(post.content) || "/tech-default.webp"
   const contentHTML = processContentHTML(post.content.replace(/<img[^>]+>/i, ""))
 
   return (
@@ -111,23 +110,23 @@ export default async function AutoPostPage({ params }: PageProps) {
         image={featuredImage}
         datePublished={post.published}
         dateModified={post.updated}
-        author={{ name: post.author.displayName, jobTitle: "Auto Journalist" }}
-        url={`https://hinditechguide.com/auto/${slug}`}
+        author={{ name: post.author.displayName, jobTitle: "Developer" }}
+        url={`https://hinditechguide.com/tech/${slug}`}
       />
 
       <BreadcrumbSchema
         items={[
           { name: "Home", url: "https://hinditechguide.com" },
-          { name: "Auto News", url: "https://hinditechguide.com/auto" },
-          { name: post.title, url: `https://hinditechguide.com/auto/${slug}` },
+          { name: "Tech News", url: "https://hinditechguide.com/tech" },
+          { name: post.title, url: `https://hinditechguide.com/tech/${slug}` },
         ]}
       />
 
       <article className="mx-auto max-w-4xl px-4 py-8 sm:px-6 lg:px-8">
-        <Link href="/auto">
+        <Link href="/tech">
           <Button variant="ghost" className="mb-8 gap-2">
             <ArrowLeft className="h-4 w-4" />
-            वापस Auto News पर
+            वापस Tech News पर
           </Button>
         </Link>
 

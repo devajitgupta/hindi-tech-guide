@@ -5,9 +5,11 @@ import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/s
 
 const navLinks = [
   { href: "/", label: "Home" },
-  { href: "/auto", label: "Auto" },
+  // { href: "/auto", label: "Auto" },
   { href: "/blog", label: "Blog" },
   { href: "/about", label: "About Us" },
+    { href: "/privacy", label: "Privacy" },
+  { href: "/terms", label: "Terms" },
   { href: "/author", label: "Writer" },
   { href: "/contact", label: "Contact" },
 ]
@@ -17,8 +19,6 @@ export function Header() {
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 shadow-sm">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-20 items-center justify-between">
-
-          {/* Logo */}
           <Link href="/" className="flex items-center gap-3">
             <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-r from-blue-500 to-purple-500 shadow-lg">
               <span className="font-bold text-2xl text-white">H</span>

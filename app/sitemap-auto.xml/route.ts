@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 
-const BLOG_AUTO_ID = process.env.BLOG_AUTO_ID!;
+const BLOG_techNews_ID = process.env.BLOG_techNews_ID!;
 const API_KEY = process.env.BLOGGER_API_KEY!;
 
 // Escape XML special characters (Safe for Google)
@@ -19,7 +19,7 @@ function escapeXML(str: string) {
 
 async function fetchAutoPosts() {
   const res = await fetch(
-    `https://www.googleapis.com/blogger/v3/blogs/${BLOG_AUTO_ID}/posts?key=${API_KEY}&maxResults=500&status=live`,
+    `https://www.googleapis.com/blogger/v3/blogs/${BLOG_techNews_ID}/posts?key=${API_KEY}&maxResults=500&status=live`,
     { next: { revalidate: 3600 } } // cache 1 hour
   );
 
