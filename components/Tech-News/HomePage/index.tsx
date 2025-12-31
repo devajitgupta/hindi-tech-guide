@@ -1,9 +1,10 @@
 import { getAllPosts } from "@/lib/blogger"
-import { NewsHeadlineTicker } from ".."
+import NewsSection from ".."
 
 interface BlogPost {
   url: string
   title: string
+  content?: string
 }
 
 export default async function NewsHomePage() {
@@ -12,11 +13,20 @@ export default async function NewsHomePage() {
   const posts = techPosts.map((post: BlogPost) => ({
     slug: post.url.split("/").pop()?.replace(".html", "") || "",
     title: post.title,
+    image:
+      post.content?.match(/<img[^>]+src="([^">]+)"/)?.[1] ||
+      "/tech-default.webp",
   }))
 
   return (
     <section className="py-4">
-      <NewsHeadlineTicker posts={posts.slice(0, 10)} />
+      <NewsSection
+        title="Tech News"
+        basePath="/tech"
+        color="blue"
+        posts={posts.slice(0, 8)}
+      />
+
     </section>
   )
 }
