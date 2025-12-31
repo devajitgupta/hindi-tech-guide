@@ -10,10 +10,11 @@ export const metadata: Metadata = {
 }
 
 export default async function HomePage() {
-  const [mobileTips, aiPosts, howTo] = await Promise.all([
+  const [mobileTips, aiPosts, howTo, mobileReviews] = await Promise.all([
     getPostsByLabel("Mobile Tips"),
     getPostsByLabel("AI"),
     getPostsByLabel("How To"),
+    getPostsByLabel("Mobile Review"),
   ])
 
   return (
@@ -32,6 +33,12 @@ export default async function HomePage() {
             description="अपने स्मार्टफोन को बेहतर बनाने के सीक्रेट टिप्स।"
             posts={mobileTips}
             viewAllLink="/label/mobile-tips"
+          />
+            <LabelPostSection
+            title="📱 Mobile Review"
+            description="अपने स्मार्टफोन को बेहतर बनाने के सीक्रेट टिप्स।"
+            posts={mobileReviews}
+            viewAllLink="/label/mobile-review"
           />
           <LabelPostSection
             title="🤖 Artificial Intelligence"
