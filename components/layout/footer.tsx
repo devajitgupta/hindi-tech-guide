@@ -6,9 +6,7 @@ export function Footer() {
     <footer className="bg-gradient-to-t from-gray-100 dark:from-gray-900 border-t border-gray-200 dark:border-gray-700">
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
         <div className="grid gap-8 sm:grid-cols-2 md:grid-cols-4">
-          
-          {/* Logo & Description */}
-          <div className="space-y-4 flex flex-col">
+                    <div className="space-y-4 flex flex-col">
             <div className="flex items-center gap-2">
               <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary text-white text-lg font-bold animate-bounce">
                 H
@@ -56,12 +54,17 @@ export function Footer() {
             </h3>
             <ul className="space-y-2 text-sm">
               <li>
-                <Link href="/privacy" className="hover:text-blue-600 transition-colors duration-300">
+                <Link href="/privacy-policy" className="hover:text-blue-600 transition-colors duration-300">
                   Privacy Policy
                 </Link>
               </li>
+                  <li>
+                <Link href="/faq" className="hover:text-blue-600 transition-colors duration-300">
+                  FAQ
+                </Link>
+              </li>
               <li>
-                <Link href="/terms" className="hover:text-blue-600 transition-colors duration-300">
+                <Link href="/terms-and-conditions" className="hover:text-blue-600 transition-colors duration-300">
                   Terms & Conditions
                 </Link>
               </li>

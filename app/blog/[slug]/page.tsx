@@ -178,6 +178,7 @@ export default async function BlogPostPage({ params }: PageProps) {
         author={{ name: post.author.displayName, jobTitle: "Author" }}
         url={`https://hinditechguide.com/blog/${slug}`}
       />
+
       <BreadcrumbSchema
         items={[
           { name: "Home", url: "https://hinditechguide.com" },
@@ -193,7 +194,25 @@ export default async function BlogPostPage({ params }: PageProps) {
             वापस Blog पर
           </Button>
         </Link>
-
+        <nav aria-label="Breadcrumb" className="mb-4 text-sm text-muted-foreground">
+          <ol className="flex flex-wrap items-center gap-1">
+            <li>
+              <Link href="/" className="hover:underline text-blue-600">
+                Home
+              </Link>
+            </li>
+            <li>/</li>
+            <li>
+              <Link href="/blog" className="hover:underline text-blue-600">
+                Blog
+              </Link>
+            </li>
+            <li>/</li>
+            <li className="text-foreground font-medium line-clamp-1">
+              {post.title}
+            </li>
+          </ol>
+        </nav>
         <header className="mb-8">
           <Badge variant="secondary" className="mb-4">
             {category}

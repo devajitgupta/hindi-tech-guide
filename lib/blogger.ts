@@ -17,6 +17,26 @@ function extractFirstImage(html: string) {
 }
 
 // -------------------- Generic Functions -------------------- //
+export async function getAllLabels(
+  blogType: "main" | "techNews" = "main"
+) {
+  const posts = await getAllPosts(blogType, 500)
+
+  const labelMap = new Map<string, number>()
+
+  posts.forEach((post: any) => {
+    post.labels?.forEach((label: string) => {
+      labelMap.set(label, (labelMap.get(label) || 0) + 1)
+    })
+  })
+
+  return Array.from(labelMap.entries()).map(([name, count]) => ({
+    name,
+    slug: name.toLowerCase().replace(/\s+/g, "-"),
+    count,
+    description: `${name} से जुड़े ${count}+ आर्टिकल पढ़ें`,
+  }))
+}
 
 export async function getAllPosts(blogType: "main" | "techNews" = "main", limit: number = 500) {
   const res = await fetch(`${getBaseUrl(blogType)}/posts?key=${API_KEY}&maxResults=${limit}`, {

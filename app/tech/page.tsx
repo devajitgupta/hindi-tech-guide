@@ -59,13 +59,13 @@ export default async function TechNewsPage() {
       <WebPageSchema
         name="Tech News - HindiTechGuide"
         description="Daily Technology updates, Smartphone reviews and Software news in Hindi"
-        url="https://hinditechguide.com/tech-news"
+        url="https://hinditechguide.com/tech"
       />
 
       <BreadcrumbSchema
         items={[
           { name: "Home", url: "https://hinditechguide.com" },
-          { name: "Tech News", url: "https://hinditechguide.com/tech-news" },
+          { name: "Tech News", url: "https://hinditechguide.com/tech" },
         ]}
       />
 
@@ -89,7 +89,7 @@ export default async function TechNewsPage() {
         <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
           {posts.map((post: any, i: number) => (
             <article key={post.slug} className="group" itemScope itemType="https://schema.org/TechArticle">
-              <Link href={`/tech-news/${post.slug}`} className="block h-full">
+              <Link href={`/tech/${post.slug}`} className="block h-full">
                 <Card className="h-full border-none shadow-none hover:bg-muted/50 transition-colors rounded-xl overflow-hidden">
                   <div className="relative aspect-video overflow-hidden rounded-xl border">
                     <Image

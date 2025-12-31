@@ -4,7 +4,7 @@ import { Noto_Sans_Devanagari, Geist_Mono } from "next/font/google"
 import { Analytics } from "@vercel/analytics/next"
 import { Header } from "@/components/layout/header"
 import { Footer } from "@/components/layout/footer"
-import { OrganizationSchema } from "@/components/seo/json-ld"
+import { OrganizationSchema, WebSiteSchema } from "@/components/seo/json-ld"
 import "./globals.css"
 import Script from "next/script"
 import ConsentBanner from "@/components/ConsentBanner"
@@ -103,13 +103,18 @@ export default function RootLayout({
       <head>
         <OrganizationSchema
           name="HindiTechGuide"
-          description="भारतीय टेक्नोलॉजी उत्साही लोगों के लिए हिंदी में तकनीकी गाइड और ट्यूटोरियल"
+          description="Hindi technology blog and tutorials"
           url="https://hinditechguide.com"
-          author={{
-            name: "Ajit Gupta",
-            jobTitle: "Engineer & Tech Writer",
-          }}
+          author={{ name: "Ajit Gupta", jobTitle: "Founder & Author" }}
+          sameAs={[
+            "https://x.com/Hinditechguides",
+            "https://www.linkedin.com/in/hindi-tech-guide-727497386/",
+            "https://github.com/devajitgupta",
+            "https://instagram.com/hinditechguide",
+          ]}
         />
+        <WebSiteSchema />
+
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-LZ7YYVR7LD"
           strategy="afterInteractive"
@@ -133,7 +138,7 @@ export default function RootLayout({
       <body>
         <Header />
         <MotionProvider>
-        <main className="flex-1">{children}</main>
+          <main className="flex-1">{children}</main>
         </MotionProvider>
         <Footer />
         <ConsentBanner />

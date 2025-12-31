@@ -2,6 +2,7 @@ import type { Metadata } from "next"
 import { WebPageSchema, BreadcrumbSchema } from "@/components/seo/json-ld"
 import { getPostsByLabel } from "@/lib/blogger"
 import LabelPostSection from "@/components/Mobile-tips"
+import NewsHomePage from "@/components/Tech-News/HomePage"
 
 export const metadata: Metadata = {
   title: "HindiTechGuide - हिंदी में तकनीकी गाइड और ट्यूटोरियल",
@@ -9,10 +10,9 @@ export const metadata: Metadata = {
 }
 
 export default async function HomePage() {
-  const [mobileTips, aiPosts, techNews, mobileReviews] = await Promise.all([
+  const [mobileTips, aiPosts, howTo] = await Promise.all([
     getPostsByLabel("Mobile Tips"),
     getPostsByLabel("AI"),
-    getPostsByLabel("Tech News"),
     getPostsByLabel("How To"),
   ])
 
@@ -25,16 +25,14 @@ export default async function HomePage() {
       />
       <BreadcrumbSchema items={[{ name: "Home", url: "https://hinditechguide.com" }]} />
       <main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        
-        {/* Sections based on Labels */}
-        <div className="space-y-12 py-10">
+        <NewsHomePage/>
+        <div className="space-y-8 py-8">
           <LabelPostSection
             title="📱 Mobile Tips & Tricks"
             description="अपने स्मार्टफोन को बेहतर बनाने के सीक्रेट टिप्स।"
             posts={mobileTips}
             viewAllLink="/label/mobile-tips"
           />
-
           <LabelPostSection
             title="🤖 Artificial Intelligence"
             description="AI की दुनिया और ChatGPT के बेहतरीन इस्तेमाल।"
@@ -43,16 +41,9 @@ export default async function HomePage() {
           />
 
           <LabelPostSection
-            title="📰 Tech News"
-            description="टेक्नोलॉजी की दुनिया की ताज़ा ख़बरें।"
-            posts={techNews}
-            viewAllLink="/label/tech-news"
-          />
-
-          <LabelPostSection
-            title="📲 How To Guides"
-            description="कठिन तकनीकी चीज़ों को आसान भाषा में सीखें।"
-            posts={mobileReviews}
+            title="🛠️ How To Guides"
+            description="टेक्नोलॉजी से जुड़ी समस्याओं के आसान समाधान।"
+            posts={howTo}
             viewAllLink="/label/how-to"
           />
         </div>

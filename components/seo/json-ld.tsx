@@ -3,7 +3,7 @@
 import Script from "next/script"
 
 /* ---------------------------------------------------------
- ✅ 1. ORGANIZATION SCHEMA
+   ORGANIZATION SCHEMA
 ---------------------------------------------------------- */
 interface OrganizationSchemaProps {
   name: string
@@ -28,10 +28,11 @@ export function OrganizationSchema({
   const schema = {
     "@context": "https://schema.org",
     "@type": "Organization",
+    "@id": `${url}#organization`,
     name,
     description,
     url,
-    logo: logo || `${url}/hinditechguide.png`,
+    logo: logo || `${url}/logo.png`,
     foundingDate: "2024",
     founder: {
       "@type": "Person",
@@ -43,7 +44,7 @@ export function OrganizationSchema({
 
   return (
     <Script
-      id="organization-schema"
+      id="schema-org-organization"
       type="application/ld+json"
       dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
     />
@@ -51,24 +52,26 @@ export function OrganizationSchema({
 }
 
 /* ---------------------------------------------------------
- ✅ 2. WEBSITE SCHEMA + SEARCH ACTION (Sitelinks Search Box)
+   WEBSITE SCHEMA + SEARCH ACTION
 ---------------------------------------------------------- */
 export function WebSiteSchema() {
   const schema = {
     "@context": "https://schema.org",
     "@type": "WebSite",
+    "@id": "https://hinditechguide.com/#website",
     name: "HindiTechGuide",
     url: "https://hinditechguide.com",
+    inLanguage: "hi-IN",
     potentialAction: {
       "@type": "SearchAction",
-      target: "https://hinditechguide.com/?q={search_term_string}",
+      target: "https://hinditechguide.com/search?q={search_term_string}",
       "query-input": "required name=search_term_string",
     },
   }
 
   return (
     <Script
-      id="website-schema"
+      id="schema-org-website"
       type="application/ld+json"
       dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
     />
@@ -76,7 +79,7 @@ export function WebSiteSchema() {
 }
 
 /* ---------------------------------------------------------
- ✅ 3. WEBPAGE SCHEMA (Homepage / Single page)
+   WEBPAGE SCHEMA
 ---------------------------------------------------------- */
 interface WebPageSchemaProps {
   name: string
@@ -94,27 +97,29 @@ export function WebPageSchema({
   const schema = {
     "@context": "https://schema.org",
     "@type": "WebPage",
+    "@id": `${url}#webpage`,
     name,
     description,
     url,
     inLanguage: "hi-IN",
     image: image || `${url}/cover.png`,
     isPartOf: {
-      "@type": "WebSite",
-      name: "HindiTechGuide",
-      url: "https://hinditechguide.com",
+      "@id": "https://hinditechguide.com/#website",
     },
   }
 
   return (
     <Script
-      id="webpage-schema"
+      id={`schema-org-webpage-${url}`}
       type="application/ld+json"
       dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
     />
   )
 }
 
+/* ---------------------------------------------------------
+   BLOG POSTING SCHEMA
+---------------------------------------------------------- */
 interface ArticleSchemaProps {
   headline: string
   description: string
@@ -143,36 +148,38 @@ export function ArticleSchema({
 }: ArticleSchemaProps) {
   const schema = {
     "@context": "https://schema.org",
-    "@type": "Article",
+    "@type": "BlogPosting",
+    "@id": `${url}#article`,
     headline,
     description,
-    image: [image || `${url}/hinditechguide.png`],
+    image: [image || "https://hinditechguide.com/default-og.webp"],
     datePublished,
     dateModified: dateModified || datePublished,
+    inLanguage: "hi-IN",
     author: {
       "@type": "Person",
       name: author.name,
       jobTitle: author.jobTitle,
+      url: "https://hinditechguide.com/author/ajit-gupta",
     },
     publisher: {
       "@type": "Organization",
-      name: "HindiTechGuide",
-      logo: {
-        "@type": "ImageObject",
-        url: `${url}/logo.png`,
-      },
+      "@id": "https://hinditechguide.com/#organization",
     },
-    keywords: keywords.join(", "),
+    keywords,
     articleSection: category,
     mainEntityOfPage: {
       "@type": "WebPage",
       "@id": url,
     },
+    isPartOf: {
+      "@id": "https://hinditechguide.com/#website",
+    },
   }
 
   return (
     <Script
-      id="article-schema"
+      id={`schema-org-article-${url}`}
       type="application/ld+json"
       dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
     />
@@ -180,7 +187,7 @@ export function ArticleSchema({
 }
 
 /* ---------------------------------------------------------
- ✅ 5. BREADCRUMB SCHEMA
+   BREADCRUMB SCHEMA
 ---------------------------------------------------------- */
 interface BreadcrumbSchemaProps {
   items: Array<{ name: string; url: string }>
@@ -200,7 +207,7 @@ export function BreadcrumbSchema({ items }: BreadcrumbSchemaProps) {
 
   return (
     <Script
-      id="breadcrumb-schema"
+      id={`schema-org-breadcrumb-${items.length}`}
       type="application/ld+json"
       dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
     />

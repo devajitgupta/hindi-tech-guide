@@ -89,8 +89,6 @@ export default async function LabelPage({ params }:PageProps ) {
           </Link>
         ))}
       </div>
-
-      {/* Empty State */}
       {!posts.length && (
         <p className="mt-10 text-center text-muted-foreground">
           इस कैटेगरी में अभी कोई पोस्ट उपलब्ध नहीं है।

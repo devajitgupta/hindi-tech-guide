@@ -11,7 +11,7 @@ import {
   getLatestPosts,
   getPostBySlug,
   getRelatedPosts,
-} from "@/lib/blogger" // unified API
+} from "@/lib/blogger" 
 
 import '../../blog/blog-post.css'
 import ReadAlso from "@/components/ReadAlso"

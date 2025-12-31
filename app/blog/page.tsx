@@ -4,7 +4,7 @@ import { Calendar, Clock, RefreshCcw, Tag } from "lucide-react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { WebPageSchema, BreadcrumbSchema } from "@/components/seo/json-ld"
-import { getAllPosts, getPostsByLabel } from "@/lib/blogger"
+import { getAllPosts } from "@/lib/blogger"
 
 export const metadata = {
   title: "Blog - HindiTechGuide | टेक न्यूज़ और ट्यूटोरियल",
@@ -47,33 +47,36 @@ export default async function BlogPage() {
   const posts = items.map((post: any) => {
     const slug = post.url.split("/").pop()?.replace(".html", "") || ""
     const cleanText = cleanHtmlText(post.content || "")
-    const description = cleanText.slice(0, 150) + "..."
+    const description = cleanText.length > 150
+      ? cleanText.slice(0, 150) + "..."
+      : cleanText;
     const rawImage = extractImage(post.content)
     const optimizedImage = rawImage
-      ? rawImage.replace("s1600", "s600")
+      ? rawImage.replace(/\/s\d+(-[a-zA-Z0-9-]+)?\//, "/s640/")
       : "/default-og.webp"
+
     function extractImage(html: string): string | null {
       const match = html.match(/<img[^>]+src="([^">]+)"/)
       return match ? match[1] : null
     }
-    // Dates Logic
+
+    // UPDATED LOGIC (From Blogger API)
     const publishDate = new Date(post.published)
     const updateDate = new Date(post.updated)
-    const isUpdated = updateDate.getTime() > publishDate.getTime() + 86400000
-
-    const image = extractImage(post.content)
-    const category = post.labels?.[0] || "General"
-    const readTime = Math.ceil(cleanText.split(" ").length / 200) + " min read"
-
+    const isRecentlyUpdated = updateDate.getTime() > publishDate.getTime() + 86400000
+const wordCount = cleanText.trim().split(/\s+/).filter(word => word.length > 0).length;
+const readTime = wordCount > 0 ? Math.ceil(wordCount / 200) : 1;
+const finalReadTime = `${readTime} min read`;
     return {
       slug,
-      title: post.title + " | HindiTechGuide",
+      title: post.title,
       description,
-      category,
-      tags: post.labels || [], readTime,
+      category: post.labels?.[0] || "Tech",
+      tags: post.labels || [],
+      readTime: finalReadTime,
       publishedDate: post.published,
       updatedDate: post.updated,
-      isUpdated, 
+      isRecentlyUpdated,
       image: optimizedImage,
     }
   })
@@ -82,95 +85,77 @@ export default async function BlogPage() {
     <>
       <WebPageSchema
         name="Blog - HindiTechGuide"
-        description="तकनीकी गाइड, ट्यूटोरियल और लेख हिंदी में"
+        description="Latest technology guides and reviews in Hindi"
         url="https://hinditechguide.com/blog"
       />
+      <BreadcrumbSchema items={[{ name: "Home", url: "https://hinditechguide.com" }, { name: "Blog", url: "https://hinditechguide.com/blog" }]} />
+      <main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10">
+        <header className="mb-12 text-center">
+          <div className="grid gap-x-8 gap-y-12 md:grid-cols-2 lg:grid-cols-3">
+            {posts.map((post: any, i: number) => (
+              <article key={post.slug} className="flex flex-col group">
+                <Link href={`/blog/${post.slug}`} className="relative h-full">
+                  <Card className="h-full border border-border/50 hover:border-primary/20 transition-all duration-300 shadow-sm hover:shadow-2xl">
 
-      <BreadcrumbSchema
-        items={[
-          { name: "Home", url: "https://hinditechguide.com" },
-          { name: "Blog", url: "https://hinditechguide.com/blog" },
-        ]}
-      />
+                    <div className="relative aspect-[16/9] overflow-hidden rounded-t-xl bg-muted">
+                      <Image
+                        src={post.image}
+                        alt={post.title}
+                        fill
+                        priority={i < 3} // First 3 images load faster
+                        sizes="(max-width: 768px) 100vw, 33vw"
+                        className="object-cover transition-transform duration-700 group-hover:scale-110"
+                      />
 
-     <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-        <div className="mb-12 text-center">
-          <h1 className="text-4xl font-bold sm:text-5xl tracking-tight">हमारा लेटेस्ट Blog</h1>
-          <p className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto">
-            लेटेस्ट टेक्नोलॉजी, मोबाइल टिप्स और ऑनलाइन सुरक्षा के बारे में विस्तार से जानें।
-          </p>
-        </div>
-
-        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-          {posts.map((post: any, i: number) => (
-            <article key={post.slug} className="group flex flex-col" itemScope itemType="https://schema.org/BlogPosting">
-              <Link href={`/blog/${post.slug}`} className="flex-1">
-                <Card className="h-full border-none shadow-sm hover:shadow-xl transition-all duration-300 rounded-2xl overflow-hidden bg-card">
-                  {/* Image Container */}
-                  <div className="relative aspect-video overflow-hidden">
-                    <Image
-                      src={post.image}
-                      alt={post.title}
-                      fill
-                      priority={i < 3}
-                      sizes="(max-width: 768px) 100vw, 33vw"
-                      className="object-cover transition-transform duration-500 group-hover:scale-105"
-                    />
-                    <div className="absolute top-3 left-3 flex gap-2">
-                       <Badge className="bg-white/90 text-black hover:bg-white border-none backdrop-blur-sm">
-                         {post.category}
-                       </Badge>
-                       {post.isUpdated && (
-                         <Badge variant="secondary" className="bg-primary text-primary-foreground border-none">
-                           Updated
-                         </Badge>
-                       )}
-                    </div>
-                  </div>
-
-                  <CardHeader className="pt-6">
-                    <CardTitle className="text-xl leading-tight group-hover:text-primary transition-colors" itemProp="headline">
-                      {post.title}
-                    </CardTitle>
-                    <CardDescription className="mt-3 line-clamp-3 text-base leading-relaxed" itemProp="description">
-                      {post.description}
-                    </CardDescription>
-                  </CardHeader>
-
-                  <CardContent className="mt-auto">
-                    {/* Date & Read Time Row */}
-                    <div className="flex flex-wrap items-center gap-4 text-xs font-medium text-muted-foreground mb-4">
-                      <div className="flex items-center gap-1.5">
-                        {post.isUpdated ? <RefreshCcw className="h-3.5 w-3.5" /> : <Calendar className="h-3.5 w-3.5" />}
-                        <time dateTime={post.publishedDate}>
-                          {new Date(post.isUpdated ? post.updatedDate : post.publishedDate).toLocaleDateString("hi-IN", {
-                            day: "numeric",
-                            month: "short",
-                            year: "numeric"
-                          })}
-                        </time>
-                      </div>
-                      <div className="flex items-center gap-1.5">
-                        <Clock className="h-3.5 w-3.5" />
-                        <span>{post.readTime}</span>
+                      {/* Category & Update Badge */}
+                      <div className="absolute top-4 left-4 flex flex-col gap-2">
+                        <Badge className="bg-background/90 text-foreground backdrop-blur-md border-none shadow-sm">
+                          {post.category}
+                        </Badge>
+                        {post.isRecentlyUpdated && (
+                          <Badge className="bg-emerald-500 text-white border-none animate-in fade-in zoom-in">
+                            <RefreshCcw className="h-3 w-3 mr-1 animate-spin-slow" /> Updated
+                          </Badge>
+                        )}
                       </div>
                     </div>
 
-                    {/* Tags List */}
-                    <div className="flex flex-wrap gap-2 border-t pt-4">
-                      {post.tags.slice(0, 3).map((tag: string) => (
-                        <span key={tag} className="inline-flex items-center gap-1 text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
-                          <Tag className="h-3 w-3" /> {tag}
-                        </span>
-                      ))}
-                    </div>
-                  </CardContent>
-                </Card>
-              </Link>
-            </article>
-          ))}
-        </div>
-      </div>
+                    <CardHeader className="p-6">
+                      {/* SEO Fix: Using h2 for card titles */}
+                      <h2 className="text-2xl font-bold leading-tight group-hover:text-primary transition-colors line-clamp-2">
+                        {post.title}
+                      </h2>
+                      <CardDescription className="line-clamp-3 text-base mt-2">
+                        {post.description}
+                      </CardDescription>
+                    </CardHeader>
+
+                    <CardContent className="px-6 pb-6 mt-auto">
+                      <div className="flex items-center justify-between text-xs text-muted-foreground border-t pt-4">
+                        <div className="flex items-center gap-2">
+                          <Calendar className="h-3.5 w-3.5" />
+                          <span className="font-medium">
+                            {new Date(post.isRecentlyUpdated ? post.updatedDate : post.publishedDate)
+                              .toLocaleDateString("en-US", {
+                                month: 'short',
+                                day: 'numeric',
+                                year: 'numeric'
+                              })}
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-1.5 font-semibold text-primary/80">
+                          <Clock className="h-3.5 w-3.5" />
+                          <span>{post.readTime}</span>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </Link>
+              </article>
+            ))}
+          </div>
+        </header>
+      </main>
     </>
   )
 }
