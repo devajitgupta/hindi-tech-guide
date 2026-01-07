@@ -5,6 +5,7 @@ import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/ca
 import { Badge } from "@/components/ui/badge"
 import { WebPageSchema, BreadcrumbSchema } from "@/components/seo/json-ld"
 import { Mail, Github, Linkedin, Twitter, Award, BookOpen, Code2, GraduationCap, Laptop, Cpu, Globe } from "lucide-react"
+import Image from "next/image"
 
 export const metadata: Metadata = {
   title: "लेखक - अजीत गुप्ता | Tech Expert & Engineering Writer",
@@ -67,11 +68,15 @@ export default function AuthorPage() {
           <div className="grid gap-12 lg:grid-cols-2 lg:gap-16 items-center">
             <div className="relative">
               <div className="aspect-square max-w-md mx-auto overflow-hidden rounded-2xl border-4 border-primary/10 shadow-xl bg-muted/50">
-                <img
-                  src="/professional-indian-engineer-portrait.jpg" 
-                  alt="Ajit Gupta - HindiTechGuide Founder"
-                  className="h-full w-full object-cover transition-transform hover:scale-105 duration-500"
+                <Image
+                  src="/ajit-hinditechguide.jpg"
+                  alt="Ajit Gupta – Founder of HindiTechGuide"
+                  width={400}
+                  height={400}
+                  className="h-full w-full object-cover transition-transform duration-500 hover:scale-105"
+                  priority={false}
                 />
+
               </div>
             </div>
             <div className="space-y-6">
@@ -82,26 +87,26 @@ export default function AuthorPage() {
               </p>
               <div className="flex flex-wrap gap-4">
                 <Button variant="outline" size="icon" className="hover:text-primary hover:border-primary" asChild>
-                  <Link href="mailto:ajit@hinditechguide.com">
+                  <Link href="mailto:hinditechguide@gmail.com">
                     <Mail className="h-5 w-5" />
                     <span className="sr-only">Email</span>
                   </Link>
                 </Button>
                 {/* LinkedIn link ko prioritize karein SEO ke liye */}
                 <Button variant="outline" size="icon" className="hover:text-[#0077b5] hover:border-[#0077b5]" asChild>
-                  <Link href="https://linkedin.com/in/your-profile" target="_blank">
+                  <Link href="https://linkedin.com/in/hinditechguide" target="_blank">
                     <Linkedin className="h-5 w-5" />
                     <span className="sr-only">LinkedIn</span>
                   </Link>
                 </Button>
                 <Button variant="outline" size="icon" className="hover:text-[#1da1f2] hover:border-[#1da1f2]" asChild>
-                  <Link href="https://twitter.com/your-profile" target="_blank">
+                  <Link href="https://twitter.com/hinditechguide" target="_blank">
                     <Twitter className="h-5 w-5" />
                     <span className="sr-only">Twitter</span>
                   </Link>
                 </Button>
                 <Button variant="outline" size="icon" className="hover:text-foreground hover:border-foreground" asChild>
-                  <Link href="https://github.com/your-profile" target="_blank">
+                  <Link href="https://github.com/devajitgupta" target="_blank">
                     <Github className="h-5 w-5" />
                     <span className="sr-only">GitHub</span>
                   </Link>
@@ -116,8 +121,8 @@ export default function AuthorPage() {
       <section className="py-16 md:py-24">
         <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
           <div className="flex items-center gap-2 mb-6">
-             <Laptop className="text-primary h-8 w-8" />
-             <h2 className="font-bold text-3xl">तकनीकी परिचय</h2>
+            <Laptop className="text-primary h-8 w-8" />
+            <h2 className="font-bold text-3xl">तकनीकी परिचय</h2>
           </div>
           <div className="prose prose-lg max-w-none">
             <div className="space-y-6 text-muted-foreground text-lg leading-relaxed">

@@ -117,3 +117,19 @@
     border-color: rgb(55, 65, 81) !important;
   }
 }
+.prose img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin: 1.5rem auto;
+}
+
+/* ✅ Blogger separator div fix */
+.prose .separator {
+  width: 100%;
+  text-align: center;
+}
+
+.prose .separator img {
+  display: inline-block;
+}

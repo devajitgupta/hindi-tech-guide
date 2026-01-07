@@ -27,65 +27,131 @@ export function calculateReadingTime(text: string) {
   return `${minutes} min read`
 }
 
+// ऑप्टिमाइज्ड फ़ंक्शन: HTML कंटेंट प्रोसेसिंग
 function processContentHTML(html: string): string {
-  let processed = html.replace(/<!--[\s\S]*?-->/g, '')
-  processed = processed.replace(/style="[^"]*font-size:\s*[^;"]*;?[^"]*"/gi, (match) => {
-    return match.replace(/font-size:\s*[^;"]*/gi, '')
-  })
-  processed = processed.replace(/style="\s*"/gi, '')
-  processed = processed.replace(/\s{2,}/g, ' ')
-  processed = processed.replace(/^\s+|\s+$/gm, '')
-  processed = processed.replace(/\n{2,}/g, '\n')
-  return processed
+  let processed = html
+    // HTML कमेंट्स हटाएं
+    .replace(/<!--[\s\S]*?-->/g, '')
+    // बेकार स्टाइल एट्रिब्यूट्स हटाएं
+    .replace(/style="[^"]*font-size:\s*[^;"]*;?[^"]*"/gi, '')
+    .replace(/style="[^"]*text-align:\s*[^;"]*;?[^"]*"/gi, '')
+    .replace(/style="[^"]*clear:\s*[^;"]*;?[^"]*"/gi, '')
+    .replace(/style="\s*"/gi, '')
+    // width/height एट्रिब्यूट्स हटाएं (Next.js Image के लिए)
+    .replace(/width="[^"]*"/gi, '')
+    .replace(/height="[^"]*"/gi, '')
+    .replace(/data-original-width="[^"]*"/gi, '')
+    .replace(/data-original-height="[^"]*"/gi, '')
+    // Blogger के div.separator को सरल div में बदलें
+    .replace(/<div class="separator"[^>]*>/gi, '<div>')
+    // Extra whitespace कम करें
+    .replace(/\s{2,}/g, ' ')
+    .trim();
+
+  return processed;
 }
 
-function extractImage(html: string): string | null {
-  const imgRegex = /<img[^>]+src="([^">]+)"[^>]*>/i
-  const match = html.match(imgRegex)
+// सभी images extract करने और optimize करने का फ़ंक्शन
+function extractAndProcessImages(html: string): { processedHTML: string; imageUrls: string[] } {
+  const images: string[] = [];
+
+  // Image tags को process करें
+  const processedHTML = html.replace(/<img[^>]+src="([^">]+)"[^>]*>/gi, (match, src) => {
+    let imageUrl = src.trim();
+
+    // Blogger images को optimize करें
+    if (imageUrl.includes('blogger.googleusercontent.com')) {
+      // sXXX/ पैरामीटर हटाएं (Blogger साइज़ पैरामीटर)
+      imageUrl = imageUrl.replace(/\/s\d+\//, '/w_1200/');
+
+      // HTTPS सुनिश्चित करें
+      if (!imageUrl.startsWith('https://')) {
+        imageUrl = imageUrl.replace('http://', 'https://');
+      }
+    }
+
+    // Relative URLs को पूर्ण URL में बदलें
+    if (imageUrl.startsWith('/')) {
+      imageUrl = `https://www.hinditechguide.com${imageUrl}`;
+    }
+
+    images.push(imageUrl);
+
+    // Next.js Image कंपोनेंट के लिए optimized img tag
+    return `
+      <div class="relative my-6 w-full aspect-video rounded-xl overflow-hidden shadow-lg">
+        <img 
+          src="${imageUrl}" 
+          alt="Blog image" 
+          loading="lazy" 
+          decoding="async" 
+          class="object-cover w-full h-full"
+          style="color:transparent"
+        />
+      </div>
+    `;
+  });
+
+  return { processedHTML, imageUrls: images };
+}
+
+function extractFirstImage(html: string): string | null {
+  const imgRegex = /<img[^>]+src="([^">]+)"[^>]*>/i;
+  const match = html.match(imgRegex);
 
   if (match && match[1]) {
-    let src = match[1].trim()
+    let src = match[1].trim();
 
     if (src.startsWith('/')) {
-      src = `https://www.hinditechguide.com${src}`
+      src = `https://www.hinditechguide.com${src}`;
     }
 
     if (src.includes('blogger.googleusercontent.com') && !src.startsWith('https://')) {
-      src = src.replace('http://', 'https://')
+      src = src.replace('http://', 'https://');
     }
-    return src
+
+    if (src.includes('blogger.googleusercontent.com')) {
+      src = src.replace(/\/s\d+\//, '/w_1200/');
+    }
+
+    return src;
   }
 
-  return null
+  return null;
 }
 
 export async function generateMetadata({ params }: PageProps) {
   const { slug } = await params;
   const post = await getPostBySlug(slug);
 
-  if (!post) return {};
+  if (!post) return {
+    title: "Post Not Found | HindiTechGuide",
+    description: "The requested blog post could not be found."
+  };
 
   const base = "https://www.hinditechguide.com";
-
-  const rawDescription = post.content.replace(/<[^>]+>/g, "").trim()
-  const description = rawDescription.length > 150
-    ? rawDescription.slice(0, 150) + "..."
-    : rawDescription;
-
-  let ogImage = null;
-  const contentImage = extractImage(post.content)
-  if (contentImage) {
-    ogImage = contentImage
-  }
-  else if (post.images && post.images.length > 0 && post.images[0]?.url) {
-    const imgUrl = post.images[0].url
-    ogImage = imgUrl.startsWith('http') ? imgUrl : `${base}${imgUrl}`
-  }
-  else {
-    ogImage = `${base}/default-og.webp`
-  }
-
   const canonicalUrl = `${base}/blog/${slug}`;
+
+  const cleanContent = post.content
+    .replace(/<[^>]+>/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+
+  const description = cleanContent.length > 155
+    ? cleanContent.slice(0, 155) + "..."
+    : cleanContent;
+
+  let ogImage = extractFirstImage(post.content);
+  if (!ogImage && post.images?.[0]?.url) {
+    ogImage = post.images[0].url.startsWith('http')
+      ? post.images[0].url
+      : `${base}${post.images[0].url}`;
+  }
+  if (!ogImage) {
+    ogImage = `${base}/default-og.webp`;
+  }
+
+  const keywords = post.labels?.join(', ') || '';
 
   return {
     title: `${post.title} | HindiTechGuide`,
@@ -99,8 +165,13 @@ export async function generateMetadata({ params }: PageProps) {
       title: post.title,
       description: description,
       url: canonicalUrl,
-      type: "article",
       siteName: "HindiTechGuide",
+      locale: "hi_IN",
+      type: "article",
+      publishedTime: post.published,
+      modifiedTime: post.updated,
+      authors: [post.author.displayName],
+      tags: post.labels || [],
       images: [
         {
           url: ogImage,
@@ -109,10 +180,6 @@ export async function generateMetadata({ params }: PageProps) {
           alt: post.title,
         }
       ],
-      publishedTime: post.published,
-      modifiedTime: post.updated,
-      authors: [post.author.displayName],
-      tags: post.labels || [],
     },
 
     twitter: {
@@ -122,61 +189,84 @@ export async function generateMetadata({ params }: PageProps) {
       images: [ogImage],
       creator: "@hinditechguide",
       site: "@hinditechguide",
-    }
+    },
+
+    keywords: keywords,
+    robots: {
+      index: true,
+      follow: true,
+      googleBot: {
+        index: true,
+        follow: true,
+        'max-video-preview': -1,
+        'max-image-preview': 'large',
+        'max-snippet': -1,
+      },
+    },
   };
 }
 
 export default async function BlogPostPage({ params }: PageProps) {
-  const { slug } = await params
-  const post = await getPostBySlug(slug)
-  if (!post) notFound()
+  const { slug } = await params;
+  const post = await getPostBySlug(slug);
+
+  if (!post) notFound();
+
   const relatedPosts = await getRelatedPosts(slug, post.labels);
-
-  const description = post.content.replace(/<[^>]+>/g, "").slice(0, 150) + "..."
-  const category = post.labels?.[0] || "General"
-  const tags = post.labels?.slice(1) || []
-  const readTime = calculateReadingTime(post.content)
-
-  // Get image for main content display (without base URL for Next.js Image)
-  function getContentImage(html: string): string {
-    const imgRegex = /<img[^>]+src="([^">]+)"[^>]*>/i
-    const match = html.match(imgRegex)
-
-    if (match && match[1]) {
-      let src = match[1].trim()
-
-      // Remove protocol and domain for Next.js Image component
-      if (src.startsWith('https://')) {
-        src = src.replace('https://www.hinditechguide.com', '')
-      }
-
-      return src
-    }
-
-    return "/default-og.webp"
-  }
-
-  const contentImage = getContentImage(post.content)
-
-  function removeFirstImage(html: string): string {
-    return html.replace(/<img[^>]+>/i, '');
-  }
-
-  // Process the content to remove problematic styling
-  const processedContent = removeFirstImage(processContentHTML(post.content));
-  const finalContent = injectReadAlso(processedContent, relatedPosts, 3);
   const latestPosts = await getLatestPosts();
+
+  const readTime = calculateReadingTime(post.content);
+  const category = post.labels?.[0] || "General";
+  const tags = post.labels?.slice(1) || [];
+
+  const cleanDescription = post.content
+    .replace(/<[^>]+>/g, " ")
+    .replace(/\s+/g, " ")
+    .trim()
+    .slice(0, 150) + "...";
+
+  const { processedHTML, imageUrls } = extractAndProcessImages(
+    processContentHTML(post.content)
+  );
+
+  const featuredImage = imageUrls[0] || "/default-og.webp";
+  const finalContent = injectReadAlso(processedHTML, relatedPosts, 3);
+  const schemaData = {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "headline": post.title,
+    "description": cleanDescription,
+    "image": featuredImage,
+    "datePublished": post.published,
+    "dateModified": post.updated,
+    "author": {
+      "@type": "Person",
+      "name": post.author.displayName,
+      "url": post.author.url
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "HindiTechGuide",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://www.hinditechguide.com/logo.png"
+      }
+    },
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": `https://hinditechguide.com/blog/${slug}`
+    },
+    "articleSection": category,
+    "keywords": tags.join(", "),
+    "wordCount": post.content.split(/\s+/).length,
+    "timeRequired": `PT${Math.ceil(post.content.split(/\s+/).length / 200)}M`
+  };
 
   return (
     <>
-      <ArticleSchema
-        headline={post.title}
-        description={description}
-        image={extractImage(post.content) || "https://www.hinditechguide.com/default-og.webp"}
-        datePublished={post.published}
-        dateModified={post.updated}
-        author={{ name: post.author.displayName, jobTitle: "Author" }}
-        url={`https://hinditechguide.com/blog/${slug}`}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaData) }}
       />
 
       <BreadcrumbSchema
@@ -188,49 +278,71 @@ export default async function BlogPostPage({ params }: PageProps) {
       />
 
       <article className="mx-auto max-w-4xl px-4 py-8 sm:px-6 lg:px-8">
-        <Link href="/blog">
-          <Button variant="ghost" className="mb-8 gap-2">
+        <Link
+          href="/blog"
+          prefetch={false}
+          className="inline-block mb-8"
+        >
+          <Button variant="ghost" className="gap-2 hover:bg-accent transition-colors">
             <ArrowLeft className="h-4 w-4" />
             वापस Blog पर
           </Button>
         </Link>
-        <nav aria-label="Breadcrumb" className="mb-4 text-sm text-muted-foreground">
+
+        <nav
+          aria-label="Breadcrumb"
+          className="mb-6 text-sm text-muted-foreground"
+        >
           <ol className="flex flex-wrap items-center gap-1">
             <li>
-              <Link href="/" className="hover:underline text-blue-600">
+              <Link
+                href="/"
+                className="hover:underline text-blue-600 transition-colors"
+                prefetch={false}
+              >
                 Home
               </Link>
             </li>
-            <li>/</li>
+            <li className="text-muted-foreground">/</li>
             <li>
-              <Link href="/blog" className="hover:underline text-blue-600">
+              <Link
+                href="/blog"
+                className="hover:underline text-blue-600 transition-colors"
+                prefetch={false}
+              >
                 Blog
               </Link>
             </li>
-            <li>/</li>
-            <li className="text-foreground font-medium line-clamp-1">
+            <li className="text-muted-foreground">/</li>
+            <li className="text-foreground font-medium line-clamp-1 max-w-[200px] sm:max-w-none">
               {post.title}
             </li>
           </ol>
         </nav>
-        <header className="mb-8">
-          <Badge variant="secondary" className="mb-4">
+
+        <header className="mb-8 space-y-4">
+          <Badge
+            variant="secondary"
+            className="text-xs sm:text-sm font-semibold"
+          >
             {category}
           </Badge>
-          <h1 className="mb-4 border-b font-bold leading-normal sm:text-5xl">
+
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold leading-tight text-balance">
             {post.title}
           </h1>
 
-          <p className="text-xl text-muted-foreground text-pretty">
-            {description}
+          <p className="text-lg text-muted-foreground text-pretty leading-relaxed">
+            {cleanDescription}
           </p>
 
-          <div className="mt-6 flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
+          <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground pt-4 border-t">
             <div className="flex items-center gap-2">
               <User className="h-4 w-4" />
               <Link
                 href="/author"
-                className="hover:underline text-blue-600 dark:text-blue-400"
+                className="hover:underline text-blue-600 dark:text-blue-400 transition-colors"
+                prefetch={false}
               >
                 {post.author.displayName}
               </Link>
@@ -239,7 +351,11 @@ export default async function BlogPostPage({ params }: PageProps) {
             <div className="flex items-center gap-2">
               <Calendar className="h-4 w-4" />
               <time dateTime={post.published}>
-                {new Date(post.published).toLocaleDateString("hi-IN")}
+                {new Date(post.published).toLocaleDateString("hi-IN", {
+                  day: 'numeric',
+                  month: 'long',
+                  year: 'numeric'
+                })}
               </time>
             </div>
             <Separator orientation="vertical" className="h-4" />
@@ -250,69 +366,75 @@ export default async function BlogPostPage({ params }: PageProps) {
           </div>
 
           {tags.length > 0 && (
-            <div className="mt-4 flex flex-wrap gap-2">
+            <div className="flex flex-wrap gap-2 pt-2">
               {tags.map((tag: string) => (
-                <div
+                <Link
                   key={tag}
-                  className="flex items-center gap-1 text-xs text-muted-foreground"
+                  href={`/tag/${encodeURIComponent(tag.toLowerCase())}`}
+                  className="inline-flex items-center gap-1 text-xs px-3 py-1 rounded-full bg-accent text-accent-foreground hover:bg-accent/80 transition-colors"
+                  prefetch={false}
                 >
                   <Tag className="h-3 w-3" />
                   <span>{tag}</span>
-                </div>
+                </Link>
               ))}
             </div>
           )}
         </header>
 
-        {/* Featured Image */}
-        {contentImage !== "/default-og.webp" && (
-          <div className="relative w-full aspect-video mb-8 rounded-xl overflow-hidden">
+        {/* {featuredImage !== "/default-og.webp" && (
+          <div className="relative w-full aspect-video mb-8 rounded-xl overflow-hidden shadow-xl">
             <Image
-              src={contentImage}
+              src={featuredImage}
               alt={post.title}
               fill
               className="object-cover"
               priority
               sizes="(max-width: 640px) 100vw,
-           (max-width: 1024px) 90vw,
-           800px"
+                     (max-width: 1024px) 90vw,
+                     800px"
+              quality={85}
+              placeholder="blur"
+              blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg=="
             />
           </div>
-
-        )}
+        )} */}
 
         <div
           className="prose prose-lg max-w-none dark:prose-invert
             prose-headings:font-bold prose-headings:tracking-tight
-            prose-h1:text-4xl prose-h1:mb-4 prose-h1:mt-8
-            prose-h2:text-3xl prose-h2:mb-3 prose-h2:mt-6
-            prose-h3:text-2xl prose-h3:mb-2 prose-h3:mt-4
-            prose-p:text-base prose-p:leading-relaxed prose-p:mb-4
-            prose-ul:list-disc prose-ul:ml-6 prose-ul:mb-4
-            prose-ol:list-decimal prose-ol:ml-6 prose-ol:mb-4
+            prose-h1:text-3xl sm:prose-h1:text-4xl prose-h1:mb-6 prose-h1:mt-10
+            prose-h2:text-2xl sm:prose-h2:text-3xl prose-h2:mb-4 prose-h2:mt-8
+            prose-h3:text-xl sm:prose-h3:text-2xl prose-h3:mb-3 prose-h3:mt-6
+            prose-p:text-base sm:prose-p:text-lg prose-p:leading-relaxed prose-p:mb-6
+            prose-ul:list-disc prose-ul:ml-6 prose-ul:mb-6
+            prose-ol:list-decimal prose-ol:ml-6 prose-ol:mb-6
             prose-li:mb-2
             prose-strong:font-bold prose-strong:text-foreground
-            prose-a:text-blue-600 prose-a:no-underline hover:prose-a:underline
-            prose-img:rounded-lg prose-img:shadow-md
-            [&_hr]:my-8 [&_hr]:border-border"
-          dangerouslySetInnerHTML={{ __html: finalContent }} />
+            prose-a:text-blue-600 prose-a:no-underline hover:prose-a:underline prose-a:font-medium
+            [&_img]:rounded-lg [&_img]:shadow-lg [&_img]:my-6 [&_img]:w-full [&_img]:h-auto
+            [&_hr]:my-8 [&_hr]:border-border
+            [&_blockquote]:border-l-4 [&_blockquote]:border-primary [&_blockquote]:pl-4 [&_blockquote]:italic
+            [&_code]:bg-accent [&_code]:px-2 [&_code]:py-1 [&_code]:rounded [&_code]:text-sm"
+          dangerouslySetInnerHTML={{ __html: finalContent }}
+        />
         <SocialShare title={"Social"} />
         <ReadAlso posts={relatedPosts} />
         <LatestPosts posts={latestPosts} />
-        <AuthorCard
-          name="Ajit Gupta"
-          bio="Tech blogger, developer, and digital marketing enthusiast. Sharing tips and tutorials in Hindi."
-          avatar="/ajit-hinditechguide.jpg"
-          social={{
-            email: "hinditechguides@gmail.com",
-            twitter: "https://twitter.com/hinditechguide",
-            linkedin: "https://linkedin.com/in/ajitgupta50",
-            github: "https://github.com/devajitgupta",
-            instagram: "https://instagram.com/ajitgupta50",
-          }}
-        />
-
-
+        <div className="mt-12">
+          <AuthorCard
+            name="Ajit Gupta"
+            bio="Tech blogger, developer, and digital marketing enthusiast. Sharing tips and tutorials in Hindi."
+            avatar="/ajit-hinditechguide.jpg"
+            social={{
+              email: "hinditechguides@gmail.com",
+              twitter: "https://twitter.com/hinditechguide",
+              linkedin: "https://linkedin.com/in/ajitgupta50",
+              github: "https://github.com/devajitgupta",
+              instagram: "https://instagram.com/ajitgupta50",
+            }}
+          />
+        </div>
       </article>
     </>
   )

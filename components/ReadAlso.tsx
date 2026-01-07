@@ -43,6 +43,8 @@ export default function ReadAlso({ posts }: { posts: PostItem[] }) {
             whileHover={{ y: -6 }}
             className="group block rounded-2xl border border-gray-200 dark:border-gray-700 p-5 shadow-sm hover:shadow-lg transition-all bg-white dark:bg-gray-900"
           >
+                        <Link href={`/blog/${post.slug}`} className="block">
+
             {/* Thumbnail */}
             <div className="relative w-full aspect-[16/9] overflow-hidden rounded-xl mb-4">
               <Image
@@ -66,6 +68,7 @@ export default function ReadAlso({ posts }: { posts: PostItem[] }) {
             <p className="mt-2 text-sm text-gray-600 dark:text-gray-400 line-clamp-2">
               {post.description}
             </p>
+            </Link>
           </motion.article>
         ))}
       </div>
