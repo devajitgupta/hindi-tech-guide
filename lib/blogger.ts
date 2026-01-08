@@ -16,11 +16,10 @@ function extractFirstImage(html: string) {
   return match ? match[1] : null;
 }
 
-// -------------------- Generic Functions -------------------- //
 export async function getAllLabels(
   blogType: "main" | "techNews" = "main"
 ) {
-  const posts = await getAllPosts(blogType, 500)
+  const posts = await getAllPosts(blogType, 150)
 
   const labelMap = new Map<string, number>()
 
@@ -38,16 +37,16 @@ export async function getAllLabels(
   }))
 }
 
-export async function getAllPosts(blogType: "main" | "techNews" = "main", limit: number = 500) {
+export async function getAllPosts(blogType: "main" | "techNews" = "main", limit: number = 100) {
   const res = await fetch(`${getBaseUrl(blogType)}/posts?key=${API_KEY}&maxResults=${limit}`, {
-    cache: "no-store",
+      next: { revalidate: 3600 }, 
   });
   const data = await res.json();
   return data.items || [];
 }
 
 export async function getPostBySlug(slug: string, blogType: "main" | "techNews" = "main") {
-  const posts = await getAllPosts(blogType, 500);
+  const posts = await getAllPosts(blogType, 150);
   return posts.find((p: any) => {
     const urlSlug = p.url.split("/").pop()?.replace(".html", "");
     return urlSlug === slug;
@@ -55,7 +54,7 @@ export async function getPostBySlug(slug: string, blogType: "main" | "techNews" 
 }
 
 export async function getAllSlugs(blogType: "main" | "techNews" = "main") {
-  const posts = await getAllPosts(blogType, 500);
+  const posts = await getAllPosts(blogType, 150);
   return posts.map((post: any) => ({ slug: post.url.split("/").pop()?.replace(".html", "") }));
 }
 
@@ -77,7 +76,7 @@ export async function getLatestPosts(blogType: "main" | "techNews" = "main", lim
   }));
 }
 
-export async function getPostsByLabel(label: string, blogType: "main" | "techNews" = "main", limit: number = 500) {
+export async function getPostsByLabel(label: string, blogType: "main" | "techNews" = "main", limit: number = 150) {
   const apiUrl = `${getBaseUrl(blogType)}/posts?labels=${encodeURIComponent(label)}&maxResults=${limit}&key=${API_KEY}`;
   const res = await fetch(apiUrl );
   if (!res.ok) return [];

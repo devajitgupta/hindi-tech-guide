@@ -5,6 +5,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge"
 import { WebPageSchema, BreadcrumbSchema } from "@/components/seo/json-ld"
 import { getAllPosts } from "@/lib/blogger"
+import { BlogPost } from "@/lib/blog"
+import { getBlogList } from "@/lib/getBlogList"
+import Script from "next/script"
 
 export const metadata = {
   title: "Blog - HindiTechGuide | टेक न्यूज़ और ट्यूटोरियल",
@@ -43,46 +46,34 @@ function cleanHtmlText(html: string) {
 
 
 export default async function BlogPage() {
-  const items = await getAllPosts()
-  const posts = items.map((post: any) => {
-    const slug = post.url.split("/").pop()?.replace(".html", "") || ""
-    const cleanText = cleanHtmlText(post.content || "")
-    const description = cleanText.length > 150
-      ? cleanText.slice(0, 150) + "..."
-      : cleanText;
-    const rawImage = extractImage(post.content)
-    const optimizedImage = rawImage
-      ? rawImage.replace(/\/s\d+(-[a-zA-Z0-9-]+)?\//, "/s640/")
-      : "/default-og.webp"
+  const posts: BlogPost[] = await getBlogList()
 
-    function extractImage(html: string): string | null {
-      const match = html.match(/<img[^>]+src="([^">]+)"/)
-      return match ? match[1] : null
-    }
-
-    // UPDATED LOGIC (From Blogger API)
-    const publishDate = new Date(post.published)
-    const updateDate = new Date(post.updated)
-    const isRecentlyUpdated = updateDate.getTime() > publishDate.getTime() + 86400000
-const wordCount = cleanText.trim().split(/\s+/).filter(word => word.length > 0).length;
-const readTime = wordCount > 0 ? Math.ceil(wordCount / 200) : 1;
-const finalReadTime = `${readTime} min read`;
-    return {
-      slug,
-      title: post.title,
-      description,
-      category: post.labels?.[0] || "Tech",
-      tags: post.labels || [],
-      readTime: finalReadTime,
-      publishedDate: post.published,
-      updatedDate: post.updated,
-      isRecentlyUpdated,
-      image: optimizedImage,
-    }
-  })
+  const itemListSchema = {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    "name": "HindiTechGuide Blog Posts",
+    "description": "मोबाइल और गैजेट्स के बारे में हिंदी में जानकारी।",
+    "url": "https://hinditechguide.com/blog",
+    "itemListElement": posts.map((post: BlogPost, index: number) => ({
+      "@type": "ListItem",
+      "position": index + 1,
+      "url": `https://hinditechguide.com/blog/${post.slug}`,
+      "name": post.title,
+      "image": post.image
+    }))
+  };
 
   return (
     <>
+      <Script
+        id="blog-itemlist-schema"
+        type="application/ld+json"
+        strategy="afterInteractive"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(itemListSchema),
+        }}
+      />
+
       <WebPageSchema
         name="Blog - HindiTechGuide"
         description="Latest technology guides and reviews in Hindi"
@@ -96,13 +87,12 @@ const finalReadTime = `${readTime} min read`;
               <article key={post.slug} className="flex flex-col group">
                 <Link href={`/blog/${post.slug}`} className="relative h-full">
                   <Card className="h-full border border-border/50 hover:border-primary/20 transition-all duration-300 shadow-sm hover:shadow-2xl">
-
                     <div className="relative aspect-[16/9] overflow-hidden rounded-t-xl bg-muted">
                       <Image
                         src={post.image}
                         alt={post.title}
                         fill
-                        priority={i < 3} // First 3 images load faster
+                        priority={i < 3}
                         sizes="(max-width: 768px) 100vw, 33vw"
                         className="object-cover transition-transform duration-700 group-hover:scale-110"
                       />
@@ -119,16 +109,41 @@ const finalReadTime = `${readTime} min read`;
                         )}
                       </div>
                     </div>
-
-                    <CardHeader className="p-6">
-                      {/* SEO Fix: Using h2 for card titles */}
-                      <h2 className="text-2xl font-bold leading-tight group-hover:text-primary transition-colors line-clamp-2">
+                    <CardHeader className="p-4 sm:p-6 text-center sm:text-left">
+                      {/* Title */}
+                      <h2
+                        className="text-xl sm:text-2xl md:text-3xl font-bold
+    leading-snug sm:leading-tight
+    tracking-tight sm:tracking-normal
+    text-gray-900 dark:text-gray-100
+    group-hover:text-primary
+    transition-all duration-300
+    group-hover:translate-x-1
+    break-words"
+                      >
                         {post.title}
                       </h2>
-                      <CardDescription className="line-clamp-3 text-base mt-2">
+
+                      {/* Description */}
+                      <CardDescription
+                        className="line-clamp-2 sm:line-clamp-3
+    text-sm sm:text-base md:text-lg
+    text-gray-600 dark:text-gray-400
+    mt-3 sm:mt-4
+    leading-relaxed sm:leading-normal
+    relative overflow-hidden"
+                      >
+                        {/* Gradient fade */}
+                        <span
+                          className="bg-gradient-to-r from-transparent via-transparent
+      to-white dark:to-gray-900
+      absolute right-0 top-0 h-full w-12
+      hidden sm:block"
+                        />
                         {post.description}
                       </CardDescription>
                     </CardHeader>
+
 
                     <CardContent className="px-6 pb-6 mt-auto">
                       <div className="flex items-center justify-between text-xs text-muted-foreground border-t pt-4">
@@ -136,7 +151,7 @@ const finalReadTime = `${readTime} min read`;
                           <Calendar className="h-3.5 w-3.5" />
                           <span className="font-medium">
                             {new Date(post.isRecentlyUpdated ? post.updatedDate : post.publishedDate)
-                              .toLocaleDateString("en-US", {
+                              .toLocaleDateString("hi-IN", {
                                 month: 'short',
                                 day: 'numeric',
                                 year: 'numeric'

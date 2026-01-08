@@ -129,15 +129,15 @@ export async function generateMetadata({ params }: PageProps) {
   };
 
   const base = "https://www.hinditechguide.com";
-  const canonicalUrl = `${base}/blog/${slug}`;
+  const canonicalUrl = `${base}/tech/${slug}`;
 
   const cleanContent = post.content
     .replace(/<[^>]+>/g, " ")
     .replace(/\s+/g, " ")
     .trim();
 
-  const description = cleanContent.length > 155
-    ? cleanContent.slice(0, 155) + "..."
+  const description = cleanContent.length > 160
+    ? cleanContent.slice(0, 160) + "..."
     : cleanContent;
 
   let ogImage = extractFirstImage(post.content);
@@ -252,7 +252,7 @@ export default async function BlogPostPage({ params }: PageProps) {
     },
     "mainEntityOfPage": {
       "@type": "WebPage",
-      "@id": `https://hinditechguide.com/blog/${slug}`
+      "@id": `https://hinditechguide.com/tech/${slug}`
     },
     "articleSection": category,
     "keywords": tags.join(", "),
@@ -270,14 +270,14 @@ export default async function BlogPostPage({ params }: PageProps) {
       <BreadcrumbSchema
         items={[
           { name: "Home", url: "https://hinditechguide.com" },
-          { name: "Blog", url: "https://hinditechguide.com/blog" },
-          { name: post.title, url: `https://hinditechguide.com/blog/${slug}` },
+          { name: "Tech", url: "https://hinditechguide.com/tech" },
+          { name: post.title, url: `https://hinditechguide.com/tech/${slug}` },
         ]}
       />
 
       <article className="mx-auto max-w-4xl px-4 py-8 sm:px-6 lg:px-8">
         <Link
-          href="/blog"
+          href="/tech"
           prefetch={false}
           className="inline-block mb-8"
         >
@@ -304,11 +304,11 @@ export default async function BlogPostPage({ params }: PageProps) {
             <li className="text-muted-foreground">/</li>
             <li>
               <Link
-                href="/blog"
+                href="/tech"
                 className="hover:underline text-blue-600 transition-colors"
                 prefetch={false}
               >
-                Blog
+                Tech
               </Link>
             </li>
             <li className="text-muted-foreground">/</li>

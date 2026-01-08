@@ -13,17 +13,16 @@ export const metadata = {
   openGraph: {
     title: "Tech News - HindiTechGuide",
     description: "लेटेस्ट स्मार्टफोन, ऐप्स और टेक्नोलॉजी की ताज़ा खबरें हिंदी में।",
-    url: "https://hinditechguide.com/tech-news",
+    url: "https://hinditechguide.com/tech",
     siteName: "HindiTechGuide",
     type: "website",
     images: [{ url: "https://hinditechguide.com/og-tech.png" }],
   },
   alternates: {
-    canonical: "https://hinditechguide.com/tech-news",
+    canonical: "https://hinditechguide.com/tech",
   },
 }
 
-// Helpers unchanged as they work perfectly
 function cleanHtmlText(html: string) {
   return html.replace(/<[^>]*>/g, "").replace(/&nbsp;/g, " ").replace(/&amp;/g, "&").replace(/\s+/g, " ").trim()
 }
@@ -35,13 +34,11 @@ function extractImage(html: string): string | null {
 
 export default async function TechNewsPage() {
   const items = await getAllPosts("techNews", 20)
-  
   const posts = items.map((post: any) => {
     const slug = post.url.split("/").pop()?.replace(".html", "") || ""
     const cleanText = cleanHtmlText(post.content || "")
     const rawImage = extractImage(post.content)
     const image = rawImage ? rawImage.replace("s1600", "s600") : "/tech-default.webp"
-    
     return {
       slug,
       title: post.title,
@@ -53,9 +50,28 @@ export default async function TechNewsPage() {
       image
     }
   })
+  const itemListSchema = {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    "name": "Latest Tech News - HindiTechGuide",
+    "description": "स्मार्टफोन, ऐप्स और टेक्नोलॉजी की ताज़ा खबरें हिंदी में।",
+    "url": "https://hinditechguide.com/tech",
+    "numberOfItems": posts.length,
+    "itemListElement": posts.map((post: any, index: number) => ({
+      "@type": "ListItem",
+      "position": index + 1,
+      "url": `https://hinditechguide.com/tech/${post.slug}`,
+      "name": post.title,
+      "image": post.image
+    }))
+  };
 
   return (
     <>
+    <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListSchema) }}
+      />
       <WebPageSchema
         name="Tech News - HindiTechGuide"
         description="Daily Technology updates, Smartphone reviews and Software news in Hindi"
@@ -101,21 +117,46 @@ export default async function TechNewsPage() {
                       className="object-cover transition-transform duration-500 group-hover:scale-105"
                     />
                     <div className="absolute top-2 left-2">
-                       <Badge className="bg-black/70 backdrop-blur-md text-white border-none">
-                         {post.category}
-                       </Badge>
+                      <Badge className="bg-black/70 backdrop-blur-md text-white border-none">
+                        {post.category}
+                      </Badge>
                     </div>
                   </div>
 
-                  <CardHeader className="px-0">
-                    <CardTitle className="text-xl line-clamp-2 group-hover:text-primary transition-colors leading-tight">
+                  <CardHeader className="p-4 sm:p-6 text-center sm:text-left">
+                    {/* Title */}
+                    <h2
+                      className="text-xl sm:text-2xl md:text-3xl font-bold
+    leading-snug sm:leading-tight
+    tracking-tight sm:tracking-normal
+    text-gray-900 dark:text-gray-100
+    group-hover:text-primary
+    transition-all duration-300
+    group-hover:translate-x-1
+    break-words"
+                    >
                       {post.title}
-                    </CardTitle>
-                    <CardDescription className="line-clamp-2 text-base mt-2">
+                    </h2>
+
+                    {/* Description */}
+                    <CardDescription
+                      className="line-clamp-2 sm:line-clamp-3
+    text-sm sm:text-base md:text-lg
+    text-gray-600 dark:text-gray-400
+    mt-3 sm:mt-4
+    leading-relaxed sm:leading-normal
+    relative overflow-hidden"
+                    >
+                      {/* Gradient fade */}
+                      <span
+                        className="bg-gradient-to-r from-transparent via-transparent
+      to-white dark:to-gray-900
+      absolute right-0 top-0 h-full w-12
+      hidden sm:block"
+                      />
                       {post.description}
                     </CardDescription>
                   </CardHeader>
-
                   <CardContent className="px-0">
                     <div className="flex items-center gap-4 text-xs font-medium text-muted-foreground uppercase tracking-tighter">
                       <div className="flex items-center gap-1">
@@ -127,7 +168,7 @@ export default async function TechNewsPage() {
                         <span>{post.readTime}</span>
                       </div>
                     </div>
-                    
+
                     <div className="mt-4 flex flex-wrap gap-2">
                       {post.tags.slice(0, 2).map((tag: string) => (
                         <span key={tag} className="inline-flex items-center gap-1 px-2 py-1 rounded-md bg-secondary text-[10px] font-bold text-secondary-foreground">
