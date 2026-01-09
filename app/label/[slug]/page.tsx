@@ -30,12 +30,7 @@ export default async function LabelPage({ params }:PageProps ) {
    const { slug } = await params 
   const label = LABEL_MAP[slug]
   if (!label) notFound()
-
-  console.log("SLUG:", slug)
-
-
   const posts = await getPostsByLabel(label)
-
   return (
     <div className="mx-auto max-w-7xl px-4 py-10">
       <header className="mb-10 text-center">

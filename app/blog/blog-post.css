@@ -98,7 +98,6 @@
   border-color: rgb(229, 231, 235) !important;
 }
 
-/* Dark mode adjustments */
 @media (prefers-color-scheme: dark) {
   .prose h1,
   .prose h2,
@@ -124,7 +123,6 @@
   margin: 1.5rem auto;
 }
 
-/* ✅ Blogger separator div fix */
 .prose .separator {
   width: 100%;
   text-align: center;
@@ -132,4 +130,16 @@
 
 .prose .separator img {
   display: inline-block;
+}
+.prose table {
+  display: block;
+  overflow-x: auto;
+  white-space: nowrap;
+}
+
+.prose iframe {
+  width: 100% !important;
+  aspect-ratio: 16 / 9;
+  height: auto !important;
+  border-radius: 0.75rem;
 }

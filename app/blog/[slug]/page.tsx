@@ -51,74 +51,48 @@ function processContentHTML(html: string): string {
   return processed;
 }
 
-// सभी images extract करने और optimize करने का फ़ंक्शन
 function extractAndProcessImages(html: string): { processedHTML: string; imageUrls: string[] } {
   const images: string[] = [];
 
-  // Image tags को process करें
-  const processedHTML = html.replace(/<img[^>]+src="([^">]+)"[^>]*>/gi, (match, src) => {
+  // यह Regex alt, title और src तीनों को कैप्चर करेगा चाहे वो किसी भी ऑर्डर में हों
+  const processedHTML = html.replace(/<img([^>]+)src="([^">]+)"([^>]*)>/gi, (match, before, src, after) => {
     let imageUrl = src.trim();
 
-    // Blogger images को optimize करें
+    // 1. URL Optimization
     if (imageUrl.includes('blogger.googleusercontent.com')) {
-      // sXXX/ पैरामीटर हटाएं (Blogger साइज़ पैरामीटर)
-      imageUrl = imageUrl.replace(/\/s\d+\//, '/w_1200/');
-
-      // HTTPS सुनिश्चित करें
-      if (!imageUrl.startsWith('https://')) {
-        imageUrl = imageUrl.replace('http://', 'https://');
-      }
-    }
-
-    // Relative URLs को पूर्ण URL में बदलें
-    if (imageUrl.startsWith('/')) {
-      imageUrl = `https://www.hinditechguide.com${imageUrl}`;
+      imageUrl = imageUrl.replace(/\/s\d+(-h\d+)?\//, '/w1200/'); // Blogger HD size
+      if (!imageUrl.startsWith('https://')) imageUrl = imageUrl.replace('http://', 'https://');
     }
 
     images.push(imageUrl);
 
-    // Next.js Image कंपोनेंट के लिए optimized img tag
+    // 2. Alt और Title को Extract करना (अगर मौजूद हैं)
+    const fullAttributes = before + after;
+    const altMatch = fullAttributes.match(/alt="([^">]*)"/i);
+    const titleMatch = fullAttributes.match(/title="([^">]*)"/i);
+
+    const altText = altMatch ? altMatch[1] : "HindiTechGuide Blog Image";
+    const titleText = titleMatch ? titleMatch[1] : "";
     return `
-      <div class="relative my-6 w-full aspect-video rounded-xl overflow-hidden shadow-lg">
-        <img 
-          src="${imageUrl}" 
-          alt="Blog image" 
-          loading="lazy" 
-          decoding="async" 
-          class="object-cover w-full h-full"
-          style="color:transparent"
-        />
-      </div>
+      <figure class="my-8 group">
+        <div class="relative w-full overflow-hidden rounded-xl shadow-lg border border-border bg-muted">
+          <img
+            src="${imageUrl}" 
+            alt="${altText}" 
+            title="${titleText}"
+            loading="lazy" 
+            decoding="async" 
+            class="w-full h-auto object-cover transition-transform duration-500 group-hover:scale-[1.01]"
+          />
+        </div>
+        ${titleText ? `<figcaption class="mt-3 text-center text-sm text-muted-foreground italic font-medium">${titleText}</figcaption>` : ''}
+      </figure>
     `;
   });
 
   return { processedHTML, imageUrls: images };
 }
 
-function extractFirstImage(html: string): string | null {
-  const imgRegex = /<img[^>]+src="([^">]+)"[^>]*>/i;
-  const match = html.match(imgRegex);
-
-  if (match && match[1]) {
-    let src = match[1].trim();
-
-    if (src.startsWith('/')) {
-      src = `https://www.hinditechguide.com${src}`;
-    }
-
-    if (src.includes('blogger.googleusercontent.com') && !src.startsWith('https://')) {
-      src = src.replace('http://', 'https://');
-    }
-
-    if (src.includes('blogger.googleusercontent.com')) {
-      src = src.replace(/\/s\d+\//, '/w_1200/');
-    }
-
-    return src;
-  }
-
-  return null;
-}
 
 export async function generateMetadata({ params }: PageProps) {
   const { slug } = await params;
@@ -141,16 +115,22 @@ export async function generateMetadata({ params }: PageProps) {
     ? cleanContent.slice(0, 155) + "..."
     : cleanContent;
 
-  let ogImage = extractFirstImage(post.content);
-  if (!ogImage && post.images?.[0]?.url) {
-    ogImage = post.images[0].url.startsWith('http')
-      ? post.images[0].url
-      : `${base}${post.images[0].url}`;
-  }
-  if (!ogImage) {
-    ogImage = `${base}/default-og.webp`;
+ const firstImgMatch = post.content.match(/<img[^>]+src="([^">]+)"/i);
+  let ogImage = "/default-og.webp";
+
+  if (firstImgMatch && firstImgMatch[1]) {
+    ogImage = firstImgMatch[1].trim();
+    // ब्लॉगर इमेज को HD (w1200) में बदलें
+    if (ogImage.includes('blogger.googleusercontent.com')) {
+      ogImage = ogImage.replace(/\/s\d+(-h\d+)?\//, '/w1200/');
+    }
+  } else if (post.images?.[0]?.url) {
+    ogImage = post.images[0].url;
   }
 
+  if (!ogImage.startsWith('http')) {
+    ogImage = `${base}${ogImage.startsWith('/') ? '' : '/'}${ogImage}`;
+  }
   const keywords = post.labels?.join(', ') || '';
 
   return {
@@ -209,16 +189,12 @@ export async function generateMetadata({ params }: PageProps) {
 export default async function BlogPostPage({ params }: PageProps) {
   const { slug } = await params;
   const post = await getPostBySlug(slug);
-
   if (!post) notFound();
-
   const relatedPosts = await getRelatedPosts(slug, post.labels);
   const latestPosts = await getLatestPosts();
-
   const readTime = calculateReadingTime(post.content);
   const category = post.labels?.[0] || "General";
   const tags = post.labels?.slice(1) || [];
-
   const cleanDescription = post.content
     .replace(/<[^>]+>/g, " ")
     .replace(/\s+/g, " ")
@@ -229,7 +205,7 @@ export default async function BlogPostPage({ params }: PageProps) {
     processContentHTML(post.content)
   );
 
-  const featuredImage = imageUrls[0] || "/default-og.webp";
+const featuredImage = imageUrls[0] || (post.images?.[0]?.url.replace(/\/s\d+(-h\d+)?\//, '/w1200/')) || "/default-og.webp";
   const finalContent = injectReadAlso(processedHTML, relatedPosts, 3);
   const schemaData = {
     "@context": "https://schema.org",
@@ -242,7 +218,7 @@ export default async function BlogPostPage({ params }: PageProps) {
     "author": {
       "@type": "Person",
       "name": post.author.displayName,
-      "url": post.author.url
+        "url": "https://www.hinditechguide.com/"
     },
     "publisher": {
       "@type": "Organization",
