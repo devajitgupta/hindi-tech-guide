@@ -112,7 +112,7 @@ export async function generateMetadata({ params }: PageProps) {
     .trim();
 
   const description = cleanContent.length > 155
-    ? cleanContent.slice(0, 155) + "..."
+    ? cleanContent.slice(0, 200) + "..."
     : cleanContent;
 
  const firstImgMatch = post.content.match(/<img[^>]+src="([^">]+)"/i);
@@ -199,7 +199,7 @@ export default async function BlogPostPage({ params }: PageProps) {
     .replace(/<[^>]+>/g, " ")
     .replace(/\s+/g, " ")
     .trim()
-    .slice(0, 150) + "...";
+    .slice(0, 2) + "...";
 
   const { processedHTML, imageUrls } = extractAndProcessImages(
     processContentHTML(post.content)
@@ -307,10 +307,6 @@ const featuredImage = imageUrls[0] || (post.images?.[0]?.url.replace(/\/s\d+(-h\
           <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold leading-tight text-balance">
             {post.title}
           </h1>
-
-          <p className="text-lg text-muted-foreground text-pretty leading-relaxed">
-            {cleanDescription}
-          </p>
 
           <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground pt-4 border-t">
             <div className="flex items-center gap-2">
