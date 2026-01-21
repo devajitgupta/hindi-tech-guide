@@ -185,7 +185,14 @@ export async function generateMetadata({ params }: PageProps) {
     },
   };
 }
-
+function getRawText(html: string) {
+  return html
+    .replace(/<script[^>]*>([\S\s]*?)<\/script>/gmi, '')
+    .replace(/<style[^>]*>([\S\s]*?)<\/style>/gmi, '')
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
 export default async function BlogPostPage({ params }: PageProps) {
   const { slug } = await params;
   const post = await getPostBySlug(slug);
@@ -204,14 +211,23 @@ export default async function BlogPostPage({ params }: PageProps) {
   const { processedHTML, imageUrls } = extractAndProcessImages(
     processContentHTML(post.content)
   );
-
+function getRawText(html: string) {
+  return html
+    .replace(/<script[^>]*>([\S\s]*?)<\/script>/gmi, '') 
+    .replace(/<style[^>]*>([\S\s]*?)<\/style>/gmi, '')   
+    .replace(/<[^>]+>/g, ' ')                           
+    .replace(/\s+/g, ' ')                              
+    .trim();
+}
 const featuredImage = imageUrls[0] || (post.images?.[0]?.url.replace(/\/s\d+(-h\d+)?\//, '/w1200/')) || "/default-og.webp";
   const finalContent = injectReadAlso(processedHTML, relatedPosts, 3);
+  const rawContent = getRawText(post.content);
   const schemaData = {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
     "headline": post.title,
     "description": cleanDescription,
+    "articleBody": rawContent,
     "image": featuredImage,
     "datePublished": post.published,
     "dateModified": post.updated,
@@ -336,22 +352,6 @@ const featuredImage = imageUrls[0] || (post.images?.[0]?.url.replace(/\/s\d+(-h\
               <span>{readTime} पढ़ने का समय</span>
             </div>
           </div>
-
-          {tags.length > 0 && (
-            <div className="flex flex-wrap gap-2 pt-2">
-              {tags.map((tag: string) => (
-                <Link
-                  key={tag}
-                  href={`/tag/${encodeURIComponent(tag.toLowerCase())}`}
-                  className="inline-flex items-center gap-1 text-xs px-3 py-1 rounded-full bg-accent text-accent-foreground hover:bg-accent/80 transition-colors"
-                  prefetch={false}
-                >
-                  <Tag className="h-3 w-3" />
-                  <span>{tag}</span>
-                </Link>
-              ))}
-            </div>
-          )}
         </header>
 
         {/* {featuredImage !== "/default-og.webp" && (

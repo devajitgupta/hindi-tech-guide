@@ -10,11 +10,11 @@ import { getBlogList } from "@/lib/getBlogList"
 import Script from "next/script"
 
 export const metadata = {
-  title: "Blog - HindiTechGuide | टेक न्यूज़ और ट्यूटोरियल",
-  description: "हिंदी में नवीनतम तकनीक, गाइड, Blog और टिप्स। रोजाना अपडेटेड Blog सेक्शन।",
+  title: "Blog - HindiTechGuide - AI,Technology Tips, Mobile & Computer Guides in Hindi",
+  description: "Explore AI, technology tips, mobile and computer tutorials in Hindi. HindiTechGuide helps you understand technology in a simple way.",
   openGraph: {
     title: "Blog - HindiTechGuide",
-    description: "हिंदी में नवीनतम तकनीक Blog और ट्यूटोरियल।",
+    description: "Explore AI, technology tips, mobile and computer tutorials in Hindi. HindiTechGuide helps you understand technology in a simple way.",
     url: "https://hinditechguide.com/blog",
     siteName: "HindiTechGuide",
     type: "website",
@@ -52,7 +52,8 @@ export default async function BlogPage() {
     "@context": "https://schema.org",
     "@type": "ItemList",
     "name": "HindiTechGuide Blog Posts",
-    "description": "मोबाइल और गैजेट्स के बारे में हिंदी में जानकारी।",
+    description:
+      "Explore AI, technology tips, mobile and computer tutorials in Hindi. HindiTechGuide helps you understand technology in a simple way.",
     "url": "https://hinditechguide.com/blog",
     "itemListElement": posts.map((post: BlogPost, index: number) => ({
       "@type": "ListItem",

@@ -45,7 +45,7 @@ export const metadata: Metadata = {
     alternateLocale: "en_US",
     url: "https://hinditechguide.com",
     siteName: "HindiTechGuide",
-    title: "HindiTechGuide - हिंदी में तकनीकी गाइड",
+    title: "HindiTechGuide - AI,Technology Tips, Mobile & Computer Guides in Hindi",
     description: "भारतीय टेक्नोलॉजी उत्साही लोगों के लिए हिंदी में तकनीकी गाइड और ट्यूटोरियल",
     images: [
       {
@@ -58,16 +58,22 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "HindiTechGuide - हिंदी में तकनीकी गाइड",
-    description: "भारतीय टेक्नोलॉजी उत्साही लोगों के लिए हिंदी में तकनीकी गाइड",
-    images: ["/twitter-image.png"],
-    creator: "@hinditechguide",
+    title: "HindiTechGuide - AI,Technology Tips, Mobile & Computer Guides in Hindi",
+    description:
+      "Explore AI, technology tips, mobile and computer tutorials in Hindi. HindiTechGuide helps you understand technology in a simple way.",
+    images: [
+      {
+        url: "/twitter-image.png",
+        alt: "HindiTechGuide - AI,Technology Tips, Mobile & Computer Guides in Hindi"
+      }
+    ],
+    creator: "@hinditechguides",
   },
+
   alternates: {
     canonical: "https://hinditechguide.com",
     languages: {
       "hi-IN": "https://hinditechguide.com",
-      "en-US": "https://hinditechguide.com/en",
     },
   },
   verification: {

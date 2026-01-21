@@ -5,8 +5,9 @@ import LabelPostSection from "@/components/Mobile-tips"
 import NewsHomePage from "@/components/Tech-News/HomePage"
 
 export const metadata: Metadata = {
-  title: "HindiTechGuide - हिंदी में तकनीकी गाइड और ट्यूटोरियल",
-  description: "भारतीय टेक्नोलॉजी उत्साही लोगों के लिए हिंदी में व्यापक तकनीकी गाइड, ट्यूटोरियल और नवीनतम टेक समाचार।",
+  title: "HindiTechGuide - AI,Technology Tips, Mobile & Computer Guides in Hindi",
+  description:
+    "Explore AI, technology tips, mobile and computer tutorials in Hindi. HindiTechGuide helps you understand technology in a simple way.",
 }
 
 export default async function HomePage() {
@@ -21,12 +22,12 @@ export default async function HomePage() {
     <>
       <WebPageSchema
         name="HindiTechGuide - Home"
-        description="भारतीय टेक्नोलॉजी उत्साही लोगों के लिए हिंदी में तकनीकी गाइड"
+        description="Explore AI, technology tips, mobile and computer tutorials in Hindi. HindiTechGuide helps you understand technology in a simple way."
         url="https://hinditechguide.com"
       />
       <BreadcrumbSchema items={[{ name: "Home", url: "https://hinditechguide.com" }]} />
       <main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <NewsHomePage/>
+        <NewsHomePage />
         <div className="space-y-8 py-8">
           <LabelPostSection
             title="📱 Mobile Tips & Tricks"
@@ -34,7 +35,7 @@ export default async function HomePage() {
             posts={mobileTips}
             viewAllLink="/label/mobile-tips"
           />
-            <LabelPostSection
+          <LabelPostSection
             title="📱 Mobile Review"
             description="अपने स्मार्टफोन को बेहतर बनाने के सीक्रेट टिप्स।"
             posts={mobileReviews}
@@ -62,7 +63,7 @@ export default async function HomePage() {
               हम क्या प्रदान करते हैं
             </h2>
             <p className="text-lg text-muted-foreground mx-auto max-w-2xl leading-relaxed">
-              HindiTechGuide पर आपको मोबाइल रिव्यु, सॉफ्टवेयर गाइड, और इंटरनेट सिक्योरिटी से जुड़े 
+              HindiTechGuide पर आपको मोबाइल रिव्यु, सॉफ्टवेयर गाइड, और इंटरनेट सिक्योरिटी से जुड़े
               गुणवत्ता पूर्ण लेख मिलेंगे।
             </p>
           </div>
