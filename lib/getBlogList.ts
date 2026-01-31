@@ -21,7 +21,6 @@ function extractImage(html: string): string | null {
 
 export async function getBlogList(): Promise<BlogPost[]> {
   const items = await getAllPosts()
-
   return items.map((post: any) => {
     const slug = post.url.split("/").pop()?.replace(".html", "") || ""
     const cleanText = cleanHtmlText(post.content || "")
@@ -32,7 +31,6 @@ export async function getBlogList(): Promise<BlogPost[]> {
     const optimizedImage = rawImage
       ? rawImage.replace(/\/s\d+(-[a-zA-Z0-9-]+)?\//, "/s640/")
       : "/default-og.webp"
-
     const publishDate = new Date(post.published)
     const updateDate = new Date(post.updated)
 

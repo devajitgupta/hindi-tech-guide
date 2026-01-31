@@ -31,23 +31,9 @@ export const metadata = {
   },
 
 }
-function cleanHtmlText(html: string) {
-  return html
-    .replace(/<[^>]*>/g, "")
-    .replace(/&nbsp;/g, " ")
-    .replace(/&ldquo;|&rdquo;/g, '"')
-    .replace(/&lsquo;|&rsquo;/g, "'")
-    .replace(/&#39;/g, "'")
-    .replace(/&quot;/g, '"')
-    .replace(/&amp;/g, "&")
-    .replace(/\s+/g, " ")
-    .trim()
-}
-
 
 export default async function BlogPage() {
   const posts: BlogPost[] = await getBlogList()
-
   const itemListSchema = {
     "@context": "https://schema.org",
     "@type": "ItemList",
@@ -63,6 +49,7 @@ export default async function BlogPage() {
       "image": post.image
     }))
   };
+
 
   return (
     <>
@@ -84,7 +71,7 @@ export default async function BlogPage() {
       <main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10">
         <header className="mb-12 text-center">
           <div className="grid gap-x-8 gap-y-12 md:grid-cols-2 lg:grid-cols-3">
-            {posts.map((post: any, i: number) => (
+            {posts.map((post: BlogPost, i: number) => (
               <article key={post.slug} className="flex flex-col group">
                 <Link href={`/blog/${post.slug}`} className="relative h-full">
                   <Card className="h-full border border-border/50 hover:border-primary/20 transition-all duration-300 shadow-sm hover:shadow-2xl">
@@ -113,7 +100,7 @@ export default async function BlogPage() {
                     <CardHeader className="p-4 sm:p-6 text-center sm:text-left">
                       {/* Title */}
                       <h2
-                        className="text-xl sm:text-2xl md:text-3xl font-bold
+                        className="text-sm sm:text-sm md:text-base font-bold
     leading-snug sm:leading-tight
     tracking-tight sm:tracking-normal
     text-gray-900 dark:text-gray-100
@@ -128,7 +115,7 @@ export default async function BlogPage() {
                       {/* Description */}
                       <CardDescription
                         className="line-clamp-2 sm:line-clamp-3
-    text-sm sm:text-base md:text-lg
+    text-sm sm:text-base md:text-sm
     text-gray-600 dark:text-gray-400
     mt-3 sm:mt-4
     leading-relaxed sm:leading-normal

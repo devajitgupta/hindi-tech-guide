@@ -10,6 +10,7 @@ import {
 
 const navLinks = [
   { href: "/", label: "Home" },
+    { href: "/tech", label: "Tech" },
   { href: "/blog", label: "Blog" },
   { href: "/about", label: "About Us" },
   { href: "/privacy-policy", label: "Privacy Policy" },

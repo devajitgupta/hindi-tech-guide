@@ -39,7 +39,7 @@ export async function getAllLabels(
 
 export async function getAllPosts(blogType: "main" | "techNews" = "main", limit: number = 100) {
   const res = await fetch(`${getBaseUrl(blogType)}/posts?key=${API_KEY}&maxResults=${limit}`, {
-      next: { revalidate: 3600 }, 
+    next: { revalidate: 3600 },
   });
   const data = await res.json();
   return data.items || [];
@@ -64,7 +64,6 @@ export async function getLatestPosts(blogType: "main" | "techNews" = "main", lim
     { next: { revalidate: 1800 } }
   );
   if (!res.ok) return [];
-
   const data = await res.json();
   const posts = data.items || [];
   return posts.map((post: any) => ({
@@ -78,7 +77,7 @@ export async function getLatestPosts(blogType: "main" | "techNews" = "main", lim
 
 export async function getPostsByLabel(label: string, blogType: "main" | "techNews" = "main", limit: number = 150) {
   const apiUrl = `${getBaseUrl(blogType)}/posts?labels=${encodeURIComponent(label)}&maxResults=${limit}&key=${API_KEY}`;
-  const res = await fetch(apiUrl );
+  const res = await fetch(apiUrl);
   if (!res.ok) return [];
   const data = await res.json();
   return (data.items || []).map((post: any) => ({
@@ -91,7 +90,10 @@ export async function getPostsByLabel(label: string, blogType: "main" | "techNew
 }
 export const LABEL_MAP: Record<string, string> = {
   "mobile-tips": "Mobile Tips",
+  "earn-money-online": "Earn Money Online",
+  "chat-gpt": "ChatGPT",
   "ai": "AI",
+  "how-to": "How To",
   "tech-news": "Tech News",
   "mobile-review": "Mobile Review",
 }
@@ -144,7 +146,7 @@ export function injectReadAlso(
   if (htmlContent.includes('id="read-also-block"')) return htmlContent;
 
   const linksToShow = relatedPosts.slice(0, limit);
-  
+
   // Create the HTML Block
   const readAlsoHtml = `
     <div id="read-also-block" class="my-8 rounded-xl border-l-4 border-blue-600 bg-muted/30 p-6 not-prose">
@@ -154,16 +156,16 @@ export function injectReadAlso(
       </h3>
       <ul class="space-y-2 list-none m-0 p-0">
         ${linksToShow
-          .map(
-            (post) => `
+      .map(
+        (post) => `
           <li class="p-0 m-0">
             <a href="/blog/${post.slug}" class="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 font-medium transition-colors underline-offset-4 hover:underline decoration-blue-600/30">
               ${post.title}
             </a>
           </li>
         `
-          )
-          .join("")}
+      )
+      .join("")}
       </ul>
     </div>
   `;

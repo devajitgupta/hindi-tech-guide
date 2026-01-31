@@ -1,8 +1,7 @@
 import { notFound } from "next/navigation"
 import Link from "next/link"
-import Image from "next/image"
 import { Calendar, Clock, User, ArrowLeft, Tag } from "lucide-react"
-import { ArticleSchema, BreadcrumbSchema } from "@/components/seo/json-ld"
+import {  BreadcrumbSchema } from "@/components/seo/json-ld"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
@@ -27,46 +26,34 @@ export function calculateReadingTime(text: string) {
   return `${minutes} min read`
 }
 
-// ऑप्टिमाइज्ड फ़ंक्शन: HTML कंटेंट प्रोसेसिंग
 function processContentHTML(html: string): string {
   let processed = html
-    // HTML कमेंट्स हटाएं
     .replace(/<!--[\s\S]*?-->/g, '')
-    // बेकार स्टाइल एट्रिब्यूट्स हटाएं
     .replace(/style="[^"]*font-size:\s*[^;"]*;?[^"]*"/gi, '')
     .replace(/style="[^"]*text-align:\s*[^;"]*;?[^"]*"/gi, '')
     .replace(/style="[^"]*clear:\s*[^;"]*;?[^"]*"/gi, '')
     .replace(/style="\s*"/gi, '')
-    // width/height एट्रिब्यूट्स हटाएं (Next.js Image के लिए)
     .replace(/width="[^"]*"/gi, '')
     .replace(/height="[^"]*"/gi, '')
     .replace(/data-original-width="[^"]*"/gi, '')
     .replace(/data-original-height="[^"]*"/gi, '')
-    // Blogger के div.separator को सरल div में बदलें
     .replace(/<div class="separator"[^>]*>/gi, '<div>')
-    // Extra whitespace कम करें
     .replace(/\s{2,}/g, ' ')
     .trim();
-
   return processed;
 }
 
 function extractAndProcessImages(html: string): { processedHTML: string; imageUrls: string[] } {
   const images: string[] = [];
 
-  // यह Regex alt, title और src तीनों को कैप्चर करेगा चाहे वो किसी भी ऑर्डर में हों
   const processedHTML = html.replace(/<img([^>]+)src="([^">]+)"([^>]*)>/gi, (match, before, src, after) => {
     let imageUrl = src.trim();
 
-    // 1. URL Optimization
     if (imageUrl.includes('blogger.googleusercontent.com')) {
-      imageUrl = imageUrl.replace(/\/s\d+(-h\d+)?\//, '/w1200/'); // Blogger HD size
+      imageUrl = imageUrl.replace(/\/s\d+(-h\d+)?\//, '/w1200/');
       if (!imageUrl.startsWith('https://')) imageUrl = imageUrl.replace('http://', 'https://');
     }
-
     images.push(imageUrl);
-
-    // 2. Alt और Title को Extract करना (अगर मौजूद हैं)
     const fullAttributes = before + after;
     const altMatch = fullAttributes.match(/alt="([^">]*)"/i);
     const titleMatch = fullAttributes.match(/title="([^">]*)"/i);

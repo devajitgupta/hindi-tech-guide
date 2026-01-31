@@ -31,26 +31,22 @@ export default async function HomePage() {
         <div className="space-y-8 py-8">
           <LabelPostSection
             title="📱 Mobile Tips & Tricks"
-            description="अपने स्मार्टफोन को बेहतर बनाने के सीक्रेट टिप्स।"
             posts={mobileTips}
             viewAllLink="/label/mobile-tips"
           />
           <LabelPostSection
             title="📱 Mobile Review"
-            description="अपने स्मार्टफोन को बेहतर बनाने के सीक्रेट टिप्स।"
             posts={mobileReviews}
             viewAllLink="/label/mobile-review"
           />
           <LabelPostSection
             title="🤖 Artificial Intelligence"
-            description="AI की दुनिया और ChatGPT के बेहतरीन इस्तेमाल।"
             posts={aiPosts}
             viewAllLink="/label/ai"
           />
 
           <LabelPostSection
             title="🛠️ How To Guides"
-            description="टेक्नोलॉजी से जुड़ी समस्याओं के आसान समाधान।"
             posts={howTo}
             viewAllLink="/label/how-to"
           />

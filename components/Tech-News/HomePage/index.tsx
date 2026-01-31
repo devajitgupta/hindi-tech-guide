@@ -9,7 +9,6 @@ interface BlogPost {
 
 export default async function NewsHomePage() {
   const techPosts = await getAllPosts("techNews", 100)
-
   const posts = techPosts.map((post: BlogPost) => ({
     slug: post.url.split("/").pop()?.replace(".html", "") || "",
     title: post.title,
