@@ -32,7 +32,7 @@ export function OrganizationSchema({
     name,
     description,
     url,
-    logo: logo || `${url}/logo.png`,
+    logo: logo || `${url}/apple-icon.png`,
     foundingDate: "2024",
     founder: {
       "@type": "Person",
@@ -152,7 +152,7 @@ export function ArticleSchema({
     "@id": `${url}#article`,
     headline,
     description,
-    image: [image || "https://hinditechguide.com/default-og.webp"],
+    image: [image || "https://hinditechguide.com/default-og-hinditechguide.webp"],
     datePublished,
     dateModified: dateModified || datePublished,
     inLanguage: "hi-IN",

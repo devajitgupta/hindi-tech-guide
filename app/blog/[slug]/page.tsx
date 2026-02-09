@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation"
 import Link from "next/link"
 import { Calendar, Clock, User, ArrowLeft, Tag } from "lucide-react"
-import {  BreadcrumbSchema } from "@/components/seo/json-ld"
+import { BreadcrumbSchema } from "@/components/seo/json-ld"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
@@ -102,8 +102,8 @@ export async function generateMetadata({ params }: PageProps) {
     ? cleanContent.slice(0, 200) + "..."
     : cleanContent;
 
- const firstImgMatch = post.content.match(/<img[^>]+src="([^">]+)"/i);
-  let ogImage = "/default-og.webp";
+  const firstImgMatch = post.content.match(/<img[^>]+src="([^">]+)"/i);
+  let ogImage = "/default-og-hinditechguide.webp";
 
   if (firstImgMatch && firstImgMatch[1]) {
     ogImage = firstImgMatch[1].trim();
@@ -119,7 +119,9 @@ export async function generateMetadata({ params }: PageProps) {
     ogImage = `${base}${ogImage.startsWith('/') ? '' : '/'}${ogImage}`;
   }
   const keywords = post.labels?.join(', ') || '';
-
+  const finalOgImage = ogImage.startsWith('http')
+    ? ogImage
+    : `https://www.hinditechguide.com${ogImage.startsWith('/') ? '' : '/'}${ogImage}`;
   return {
     title: `${post.title} | HindiTechGuide`,
     description: description,
@@ -193,42 +195,48 @@ export default async function BlogPostPage({ params }: PageProps) {
     .replace(/<[^>]+>/g, " ")
     .replace(/\s+/g, " ")
     .trim()
-    .slice(0, 2) + "...";
+    .slice(0, 160) + "...";
 
   const { processedHTML, imageUrls } = extractAndProcessImages(
     processContentHTML(post.content)
   );
-function getRawText(html: string) {
-  return html
-    .replace(/<script[^>]*>([\S\s]*?)<\/script>/gmi, '') 
-    .replace(/<style[^>]*>([\S\s]*?)<\/style>/gmi, '')   
-    .replace(/<[^>]+>/g, ' ')                           
-    .replace(/\s+/g, ' ')                              
-    .trim();
-}
-const featuredImage = imageUrls[0] || (post.images?.[0]?.url.replace(/\/s\d+(-h\d+)?\//, '/w1200/')) || "/default-og.webp";
+  function getRawText(html: string) {
+    return html
+      .replace(/<script[^>]*>([\S\s]*?)<\/script>/gmi, '')
+      .replace(/<style[^>]*>([\S\s]*?)<\/style>/gmi, '')
+      .replace(/<[^>]+>/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim();
+  }
+  const featuredImage = imageUrls[0] || (post.images?.[0]?.url.replace(/\/s\d+(-h\d+)?\//, '/w1200/')) || "/default-og-hinditechguide.webp";
   const finalContent = injectReadAlso(processedHTML, relatedPosts, 3);
   const rawContent = getRawText(post.content);
+
   const schemaData = {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
     "headline": post.title,
     "description": cleanDescription,
     "articleBody": rawContent,
-    "image": featuredImage,
+    "image": {
+      "@type": "ImageObject",
+      "url": featuredImage,
+      "width": 1200,
+      "height": 675
+    },
     "datePublished": post.published,
     "dateModified": post.updated,
     "author": {
       "@type": "Person",
       "name": post.author.displayName,
-        "url": "https://www.hinditechguide.com/"
+      "url": "https://www.hinditechguide.com/about"
     },
     "publisher": {
       "@type": "Organization",
       "name": "HindiTechGuide",
       "logo": {
         "@type": "ImageObject",
-        "url": "https://www.hinditechguide.com/logo.png"
+        "url": "https://www.hinditechguide.com/apple-icon.png"
       }
     },
     "mainEntityOfPage": {
@@ -341,7 +349,7 @@ const featuredImage = imageUrls[0] || (post.images?.[0]?.url.replace(/\/s\d+(-h\
           </div>
         </header>
 
-        {/* {featuredImage !== "/default-og.webp" && (
+        {/* {featuredImage !== "/default-og-hinditechguide.webp" && (
           <div className="relative w-full aspect-video mb-8 rounded-xl overflow-hidden shadow-xl">
             <Image
               src={featuredImage}

@@ -1,5 +1,4 @@
 "use client";
-
 import Link from "next/link";
 import Image from "next/image";
 import { motion, type Variants } from "framer-motion";
@@ -12,7 +11,6 @@ interface PostItem {
   date: string;
 }
 
-/* Animation Variants for cards */
 const cardVariants: Variants = {
   hidden: { opacity: 0, y: 20 },
   show: {
@@ -20,7 +18,7 @@ const cardVariants: Variants = {
     y: 0,
     transition: {
       duration: 0.7,
-      ease: "easeOut", // ✅ TypeScript safe
+      ease: "easeOut",
     },
   },
 };
@@ -43,7 +41,6 @@ export default function LatestPosts({ posts }: { posts: PostItem[] }) {
             className="border rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow bg-white dark:bg-gray-900"
           >
             <Link href={`/blog/${post.slug}`} className="block">
-              {/* Responsive Image with aspect ratio */}
               <div className="relative w-full aspect-[16/9] overflow-hidden">
                 <Image
                   src={post.image}

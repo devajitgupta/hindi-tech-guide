@@ -30,7 +30,7 @@ export async function getBlogList(): Promise<BlogPost[]> {
     const rawImage = extractImage(post.content)
     const optimizedImage = rawImage
       ? rawImage.replace(/\/s\d+(-[a-zA-Z0-9-]+)?\//, "/s640/")
-      : "/default-og.webp"
+      : "/default-og-hinditechguide.webp"
     const publishDate = new Date(post.published)
     const updateDate = new Date(post.updated)
 

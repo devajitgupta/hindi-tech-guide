@@ -29,27 +29,63 @@ export const metadata = {
   alternates: {
     canonical: "https://hinditechguide.com/blog",
   },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-image-preview': 'large',
+    },
+  }
 
 }
 
 export default async function BlogPage() {
   const posts: BlogPost[] = await getBlogList()
+
   const itemListSchema = {
     "@context": "https://schema.org",
     "@type": "ItemList",
     "name": "HindiTechGuide Blog Posts",
-    description:
-      "Explore AI, technology tips, mobile and computer tutorials in Hindi. HindiTechGuide helps you understand technology in a simple way.",
+    "description": "Explore AI, technology tips, mobile and computer tutorials in Hindi.",
     "url": "https://hinditechguide.com/blog",
+    "numberOfItems": posts.length,
     "itemListElement": posts.map((post: BlogPost, index: number) => ({
       "@type": "ListItem",
       "position": index + 1,
-      "url": `https://hinditechguide.com/blog/${post.slug}`,
-      "name": post.title,
-      "image": post.image
+      "item": {
+        "@type": "BlogPosting",
+        "headline": post.title,
+        "description": post.description,
+        "image": {
+          "@type": "ImageObject",
+          "url": post.image,
+          "width": 1200,
+          "height": 675
+        },
+        "datePublished": new Date(post.publishedDate).toISOString(),
+        "dateModified": new Date(post.isRecentlyUpdated ? post.updatedDate : post.publishedDate).toISOString(),
+        "author": {
+          "@type": "Person",
+          "name": "HindiTechGuide",
+          "url": "https://hinditechguide.com/about"
+        },
+        "publisher": {
+          "@type": "Organization",
+          "name": "HindiTechGuide",
+          "logo": {
+            "@type": "ImageObject",
+            "url": "https://hinditechguide.com/apple-icon.png"
+          }
+        },
+        "mainEntityOfPage": {
+          "@type": "WebPage",
+          "@id": `https://hinditechguide.com/blog/${post.slug}`
+        }
+      }
     }))
   };
-
 
   return (
     <>
@@ -77,14 +113,12 @@ export default async function BlogPage() {
                   <Card className="h-full border border-border/50 hover:border-primary/20 transition-all duration-300 shadow-sm hover:shadow-2xl">
                     <div className="relative aspect-[16/9] overflow-hidden rounded-t-xl bg-muted">
                       <Image
-                        src={post.image}
-                        alt={post.title}
+                        src={post.image || "/default-og-hinditechguide.webp"} alt={post.title}
                         fill
                         priority={i < 3}
                         sizes="(max-width: 768px) 100vw, 33vw"
                         className="object-cover transition-transform duration-700 group-hover:scale-110"
                       />
-
                       {/* Category & Update Badge */}
                       <div className="absolute top-4 left-4 flex flex-col gap-2">
                         <Badge className="bg-background/90 text-foreground backdrop-blur-md border-none shadow-sm">

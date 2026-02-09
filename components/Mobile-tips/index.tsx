@@ -42,7 +42,7 @@ export default function LabelPostSection({
               {/* Thumbnail */}
               <div className="relative w-28 h-20 flex-shrink-0 overflow-hidden rounded">
                 <Image
-                  src={post.image || "/default-og.webp"}
+                  src={post.image || "/default-og-hinditechguide.webp"}
                   alt={post.title}
                   fill
                   loading="lazy"

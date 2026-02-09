@@ -21,6 +21,15 @@ export const metadata = {
   alternates: {
     canonical: "https://hinditechguide.com/tech",
   },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-image-preview': 'large',
+    },
+  }
 }
 
 function cleanHtmlText(html: string) {
@@ -38,7 +47,7 @@ export default async function TechNewsPage() {
     const slug = post.url.split("/").pop()?.replace(".html", "") || ""
     const cleanText = cleanHtmlText(post.content || "")
     const rawImage = extractImage(post.content)
-    const image = rawImage ? rawImage.replace("s1600", "s600") : "/tech-default.webp"
+    const image = rawImage ? rawImage.replace("s1600", "s1200") : "/tech-default.webp"
     return {
       slug,
       title: post.title,
@@ -68,7 +77,7 @@ export default async function TechNewsPage() {
 
   return (
     <>
-    <script
+      <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListSchema) }}
       />
@@ -109,8 +118,7 @@ export default async function TechNewsPage() {
                 <Card className="h-full border-none shadow-none hover:bg-muted/50 transition-colors rounded-xl overflow-hidden">
                   <div className="relative aspect-video overflow-hidden rounded-xl border">
                     <Image
-                      src={post.image}
-                      alt={post.title}
+                      src={post.image || "/default-og-hinditechguide.webp"} alt={post.title}
                       fill
                       priority={i < 3}
                       sizes="(max-width: 768px) 100vw, 33vw"

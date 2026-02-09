@@ -69,7 +69,7 @@ export async function getLatestPosts(blogType: "main" | "techNews" = "main", lim
   return posts.map((post: any) => ({
     title: post.title,
     slug: post.url.split("/").pop()?.replace(".html", "") || "",
-    image: post.images?.[0]?.url || extractFirstImage(post.content) || "/default-og.webp",
+    image: post.images?.[0]?.url || extractFirstImage(post.content) || "/default-og-hinditechguide.webp",
     description: post.content.replace(/<[^>]+>/g, "").slice(0, 100) + "...",
     date: post.published,
   }));
@@ -83,7 +83,7 @@ export async function getPostsByLabel(label: string, blogType: "main" | "techNew
   return (data.items || []).map((post: any) => ({
     title: post.title,
     slug: post.url.split("/").pop()?.replace(".html", "") || "",
-    image: post.images?.[0]?.url || extractFirstImage(post.content) || "/default-og.webp",
+    image: post.images?.[0]?.url || extractFirstImage(post.content) || "/default-og-hinditechguide.webp",
     description: post.content.replace(/<[^>]+>/g, "").slice(0, 150) + "...",
     date: post.published,
   }));
@@ -112,7 +112,7 @@ export async function getRelatedPosts(currentSlug: string, labels: string[], blo
     return relatedPosts.map((post: any) => ({
       title: post.title,
       slug: post.url.split("/").pop()?.replace(".html", "") || "",
-      image: post.images?.[0]?.url || extractFirstImage(post.content) || "/default-og.webp",
+      image: post.images?.[0]?.url || extractFirstImage(post.content) || "/default-og-hinditechguide.webp",
       description: post.content.replace(/<[^>]+>/g, "").slice(0, 120) + "...",
     }));
   } catch (error) {
