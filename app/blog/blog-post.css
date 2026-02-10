@@ -143,3 +143,11 @@
   height: auto !important;
   border-radius: 0.75rem;
 }
+html {
+  scroll-behavior: smooth;
+}
+
+/* Anchor jump ke liye header offset fix */
+:target {
+  scroll-margin-top: 90px; /* sticky header height */
+}

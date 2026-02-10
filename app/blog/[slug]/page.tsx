@@ -12,6 +12,51 @@ import LatestPosts from "@/components/LatestPosts"
 import SocialShare from "@/components/SocialShare"
 import AuthorCard from "@/components/AuthorCard"
 
+function cleanHeadingText(text: string) {
+  return text
+    .replace(/&nbsp;/gi, ' ')
+    .replace(/\u00A0/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+}
+
+function generateTOC(html: string) {
+  const headingRegex = /<(h2|h3)[^>]*>(.*?)<\/\1>/gi
+  const items: { id: string; text: string; level: number }[] = []
+
+  let match
+  while ((match = headingRegex.exec(html)) !== null) {
+    const level = match[1] === "h2" ? 2 : 3
+
+    const rawText = match[2].replace(/<[^>]+>/g, "")
+    const text = cleanHeadingText(rawText)
+
+    const id = text
+      .toLowerCase()
+      .replace(/[^a-z0-9\u0900-\u097F]+/g, "-")
+      .replace(/(^-|-$)/g, "")
+
+    items.push({ id, text, level })
+  }
+
+  return items
+}
+
+function injectHeadingIds(html: string) {
+  return html.replace(/<(h2|h3)([^>]*)>(.*?)<\/\1>/gi, (_, tag, attrs, content) => {
+    const rawText = content.replace(/<[^>]+>/g, "")
+    const text = cleanHeadingText(rawText)
+
+    const id = text
+      .toLowerCase()
+      .replace(/[^a-z0-9\u0900-\u097F]+/g, "-")
+      .replace(/(^-|-$)/g, "")
+
+    return `<${tag} id="${id}"${attrs}>${content}</${tag}>`
+  })
+}
+
+
 interface PageProps {
   params: { slug: string } | Promise<{ slug: string }>
 }
@@ -107,7 +152,6 @@ export async function generateMetadata({ params }: PageProps) {
 
   if (firstImgMatch && firstImgMatch[1]) {
     ogImage = firstImgMatch[1].trim();
-    // ब्लॉगर इमेज को HD (w1200) में बदलें
     if (ogImage.includes('blogger.googleusercontent.com')) {
       ogImage = ogImage.replace(/\/s\d+(-h\d+)?\//, '/w1200/');
     }
@@ -174,14 +218,7 @@ export async function generateMetadata({ params }: PageProps) {
     },
   };
 }
-function getRawText(html: string) {
-  return html
-    .replace(/<script[^>]*>([\S\s]*?)<\/script>/gmi, '')
-    .replace(/<style[^>]*>([\S\s]*?)<\/style>/gmi, '')
-    .replace(/<[^>]+>/g, ' ')
-    .replace(/\s+/g, ' ')
-    .trim();
-}
+
 export default async function BlogPostPage({ params }: PageProps) {
   const { slug } = await params;
   const post = await getPostBySlug(slug);
@@ -248,6 +285,8 @@ export default async function BlogPostPage({ params }: PageProps) {
     "wordCount": post.content.split(/\s+/).length,
     "timeRequired": `PT${Math.ceil(post.content.split(/\s+/).length / 200)}M`
   };
+  const htmlWithIds = injectHeadingIds(finalContent)
+  const tocItems = generateTOC(htmlWithIds)
 
   return (
     <>
@@ -255,7 +294,6 @@ export default async function BlogPostPage({ params }: PageProps) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaData) }}
       />
-
       <BreadcrumbSchema
         items={[
           { name: "Home", url: "https://hinditechguide.com" },
@@ -264,17 +302,14 @@ export default async function BlogPostPage({ params }: PageProps) {
         ]}
       />
 
-      <article className="mx-auto max-w-4xl px-4 py-8 sm:px-6 lg:px-8">
-        <Link
-          href="/blog"
-          prefetch={false}
-          className="inline-block mb-8"
-        >
-          <Button variant="ghost" className="gap-2 hover:bg-accent transition-colors">
+<article className="mx-auto max-w-[720px] px-4 py-6 sm:px-6 sm:py-8 scroll-smooth">
+        <Link href="/blog" prefetch={false} className="inline-flex items-center mb-4">
+          <Button variant="ghost" size="sm" className="gap-2 px-2 text-sm">
             <ArrowLeft className="h-4 w-4" />
-            वापस Blog पर
+            Blog
           </Button>
         </Link>
+
 
         <nav
           aria-label="Breadcrumb"
@@ -306,48 +341,55 @@ export default async function BlogPostPage({ params }: PageProps) {
             </li>
           </ol>
         </nav>
+        <header className="mb-6 space-y-3">
+          <Badge variant="secondary" className="text-xs">{category}</Badge>
 
-        <header className="mb-8 space-y-4">
-          <Badge
-            variant="secondary"
-            className="text-xs sm:text-sm font-semibold"
-          >
-            {category}
-          </Badge>
-
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold leading-tight text-balance">
+          <h1 className="text-2xl sm:text-3xl font-bold leading-snug">
             {post.title}
           </h1>
 
-          <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground pt-4 border-t">
-            <div className="flex items-center gap-2">
-              <User className="h-4 w-4" />
-              <Link
-                href="/author"
-                className="hover:underline text-blue-600 dark:text-blue-400 transition-colors"
-                prefetch={false}
-              >
-                {post.author.displayName}
-              </Link>
-            </div>
-            <Separator orientation="vertical" className="h-4" />
-            <div className="flex items-center gap-2">
-              <Calendar className="h-4 w-4" />
-              <time dateTime={post.published}>
-                {new Date(post.published).toLocaleDateString("hi-IN", {
-                  day: 'numeric',
-                  month: 'long',
-                  year: 'numeric'
-                })}
-              </time>
-            </div>
-            <Separator orientation="vertical" className="h-4" />
-            <div className="flex items-center gap-2">
-              <Clock className="h-4 w-4" />
-              <span>{readTime} पढ़ने का समय</span>
-            </div>
+          <div className="flex flex-wrap gap-2 text-xs text-muted-foreground pt-3 border-t">
+            <span>{post.author.displayName}</span>
+            <span>•</span>
+            <time>{new Date(post.published).toLocaleDateString("hi-IN")}</time>
+            <span>•</span>
+            <span>{readTime}</span>
           </div>
         </header>
+        {tocItems.length > 0 && (
+          <details className="mb-6 rounded-xl border bg-muted p-4 lg:hidden">
+            <summary className="cursor-pointer font-semibold text-sm">
+              📌 Table of Contents
+            </summary>
+
+            <ul className="mt-3 space-y-2 text-sm">
+              {tocItems.map(item => (
+                <li key={item.id} className={item.level === 3 ? "ml-4" : ""}>
+                  <a href={`#${item.id}`} className="text-blue-600 hover:underline">
+                    {item.text}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </details>
+        )}
+        {tocItems.length > 0 && (
+          <aside className="hidden lg:block fixed right-6 top-28 w-64">
+            <div className="rounded-xl border bg-card p-4">
+              <h3 className="font-bold text-sm mb-3">📌 On this page</h3>
+              <ul className="space-y-2 text-sm">
+                {tocItems.map(item => (
+                  <li key={item.id} className={item.level === 3 ? "ml-4" : ""}>
+                    <a href={`#${item.id}`} className="text-muted-foreground hover:text-blue-600">
+                      {item.text}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </aside>
+        )}
+
 
         {/* {featuredImage !== "/default-og-hinditechguide.webp" && (
           <div className="relative w-full aspect-video mb-8 rounded-xl overflow-hidden shadow-xl">
@@ -368,26 +410,38 @@ export default async function BlogPostPage({ params }: PageProps) {
         )} */}
 
         <div
-          className="prose prose-lg max-w-none dark:prose-invert
-            prose-headings:font-bold prose-headings:tracking-tight
-            prose-h1:text-3xl sm:prose-h1:text-4xl prose-h1:mb-6 prose-h1:mt-10
-            prose-h2:text-2xl sm:prose-h2:text-3xl prose-h2:mb-4 prose-h2:mt-8
-            prose-h3:text-xl sm:prose-h3:text-2xl prose-h3:mb-3 prose-h3:mt-6
-            prose-p:text-base sm:prose-p:text-lg prose-p:leading-relaxed prose-p:mb-6
-            prose-ul:list-disc prose-ul:ml-6 prose-ul:mb-6
-            prose-ol:list-decimal prose-ol:ml-6 prose-ol:mb-6
-            prose-li:mb-2
-            prose-strong:font-bold prose-strong:text-foreground
-            prose-a:text-blue-600 prose-a:no-underline hover:prose-a:underline prose-a:font-medium
-            [&_img]:rounded-lg [&_img]:shadow-lg [&_img]:my-6 [&_img]:w-full [&_img]:h-auto
-            [&_hr]:my-8 [&_hr]:border-border
-            [&_blockquote]:border-l-4 [&_blockquote]:border-primary [&_blockquote]:pl-4 [&_blockquote]:italic
-            [&_code]:bg-accent [&_code]:px-2 [&_code]:py-1 [&_code]:rounded [&_code]:text-sm"
-          dangerouslySetInnerHTML={{ __html: finalContent }}
+          className="prose max-w-none
+    prose-p:text-[16px]
+    prose-p:leading-[1.8]
+    prose-p:mb-5
+
+    prose-h2:text-xl prose-h2:mt-8 prose-h2:mb-4
+    prose-h3:text-lg prose-h3:mt-6 prose-h3:mb-3
+
+    prose-ul:ml-5 prose-ol:ml-5
+    prose-li:mb-2
+
+    prose-a:text-blue-600 prose-a:font-medium
+    hover:prose-a:underline
+
+    [&_img]:w-full
+    [&_img]:h-auto
+    [&_img]:rounded-xl
+    [&_img]:my-6
+
+    dark:prose-invert"
+          dangerouslySetInnerHTML={{ __html: htmlWithIds }}
         />
-        <SocialShare title={"Social"} />
-        <ReadAlso posts={relatedPosts} />
-        <LatestPosts posts={latestPosts} />
+
+        <div className="mt-8">
+          <SocialShare title={post.title} />
+        </div>
+
+        <div className="mt-10 space-y-10">
+          <ReadAlso posts={relatedPosts.slice(0, 4)} />
+          <LatestPosts posts={latestPosts.slice(0, 4)} />
+        </div>
+
         <div className="mt-12">
           <AuthorCard
             name="Ajit Gupta"
@@ -400,8 +454,8 @@ export default async function BlogPostPage({ params }: PageProps) {
               github: "https://github.com/devajitgupta",
               instagram: "https://instagram.com/ajitgupta50",
             }}
-          />
-        </div>
+          /></div>
+
       </article>
     </>
   )
