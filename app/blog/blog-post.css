@@ -147,7 +147,10 @@ html {
   scroll-behavior: smooth;
 }
 
-/* Anchor jump ke liye header offset fix */
 :target {
-  scroll-margin-top: 90px; /* sticky header height */
+  scroll-margin-top: 90px;
 }
+h2, h3 {
+  scroll-margin-top: 90px;
+}
+

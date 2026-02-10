@@ -302,7 +302,7 @@ export default async function BlogPostPage({ params }: PageProps) {
         ]}
       />
 
-<article className="mx-auto max-w-[720px] px-4 py-6 sm:px-6 sm:py-8 scroll-smooth">
+      <article className="mx-auto max-w-[720px] px-4 py-6 sm:px-6 sm:py-8 scroll-smooth">
         <Link href="/blog" prefetch={false} className="inline-flex items-center mb-4">
           <Button variant="ghost" size="sm" className="gap-2 px-2 text-sm">
             <ArrowLeft className="h-4 w-4" />
@@ -343,11 +343,9 @@ export default async function BlogPostPage({ params }: PageProps) {
         </nav>
         <header className="mb-6 space-y-3">
           <Badge variant="secondary" className="text-xs">{category}</Badge>
-
           <h1 className="text-2xl sm:text-3xl font-bold leading-snug">
             {post.title}
           </h1>
-
           <div className="flex flex-wrap gap-2 text-xs text-muted-foreground pt-3 border-t">
             <span>{post.author.displayName}</span>
             <span>•</span>
@@ -356,83 +354,66 @@ export default async function BlogPostPage({ params }: PageProps) {
             <span>{readTime}</span>
           </div>
         </header>
-        {tocItems.length > 0 && (
-          <details className="mb-6 rounded-xl border bg-muted p-4 lg:hidden">
-            <summary className="cursor-pointer font-semibold text-sm">
-              📌 Table of Contents
-            </summary>
+      {tocItems.length > 0 && (
+  <details className="rounded-2xl border bg-muted/80 p-5 shadow-sm transition-all open:shadow-md lg:p-6">
+    <summary className="cursor-pointer font-semibold text-sm">
+      📌 Table of Contents
+    </summary>
 
-            <ul className="mt-3 space-y-2 text-sm">
-              {tocItems.map(item => (
-                <li key={item.id} className={item.level === 3 ? "ml-4" : ""}>
-                  <a href={`#${item.id}`} className="text-blue-600 hover:underline">
-                    {item.text}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </details>
-        )}
-        {tocItems.length > 0 && (
-          <aside className="hidden lg:block fixed right-6 top-28 w-64">
-            <div className="rounded-xl border bg-card p-4">
-              <h3 className="font-bold text-sm mb-3">📌 On this page</h3>
-              <ul className="space-y-2 text-sm">
-                {tocItems.map(item => (
-                  <li key={item.id} className={item.level === 3 ? "ml-4" : ""}>
-                    <a href={`#${item.id}`} className="text-muted-foreground hover:text-blue-600">
-                      {item.text}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </aside>
-        )}
+    <ul className="mt-3 space-y-2 text-sm">
+      {(() => {
+        let h2Count = 0
+        let h3Count = 0
 
+        return tocItems.map(item => {
+          if (item.level === 2) {
+            h2Count++
+            h3Count = 0
+          }
 
-        {/* {featuredImage !== "/default-og-hinditechguide.webp" && (
-          <div className="relative w-full aspect-video mb-8 rounded-xl overflow-hidden shadow-xl">
-            <Image
-              src={featuredImage}
-              alt={post.title}
-              fill
-              className="object-cover"
-              priority
-              sizes="(max-width: 640px) 100vw,
-                     (max-width: 1024px) 90vw,
-                     800px"
-              quality={85}
-              placeholder="blur"
-              blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg=="
-            />
-          </div>
-        )} */}
+          if (item.level === 3) {
+            h3Count++
+          }
 
-        <div
-          className="prose max-w-none
-    prose-p:text-[16px]
-    prose-p:leading-[1.8]
+          const number =
+            item.level === 2
+              ? `${h2Count}.`
+              : `${h2Count}.${h3Count}`
+
+          return (
+            <li
+              key={item.id}
+              className={item.level === 3 ? "ml-6" : ""}
+            >
+              <a
+                href={`#${item.id}`}
+                className="text-blue-600 hover:underline"
+              >
+                <span className="mr-1 font-medium">{number}</span>
+                {item.text}
+              </a>
+            </li>
+          )
+        })
+      })()}
+    </ul>
+  </details>
+)}
+        <div className="prose max-w-none prose-p:text-[16px] prose-p:leading-[1.8]
     prose-p:mb-5
-
     prose-h2:text-xl prose-h2:mt-8 prose-h2:mb-4
     prose-h3:text-lg prose-h3:mt-6 prose-h3:mb-3
-
     prose-ul:ml-5 prose-ol:ml-5
     prose-li:mb-2
-
     prose-a:text-blue-600 prose-a:font-medium
     hover:prose-a:underline
-
     [&_img]:w-full
     [&_img]:h-auto
     [&_img]:rounded-xl
     [&_img]:my-6
-
     dark:prose-invert"
           dangerouslySetInnerHTML={{ __html: htmlWithIds }}
         />
-
         <div className="mt-8">
           <SocialShare title={post.title} />
         </div>
