@@ -137,6 +137,22 @@ export default function RootLayout({
           crossOrigin="anonymous"
           strategy="afterInteractive"
         />
+        <Script
+          src="https://news.google.com/swg/js/v1/swg-basic.js"
+          strategy="afterInteractive"
+        />
+        <Script id="swg-init" strategy="afterInteractive">
+          {`
+    (self.SWG_BASIC = self.SWG_BASIC || []).push( basicSubscriptions => {
+      basicSubscriptions.init({
+        type: "NewsArticle",
+        isPartOfType: ["Product"],
+        isPartOfProductId: "CAow6KW-DA:openaccess",
+        clientOptions: { theme: "light", lang: "hi" },
+      });
+    });
+  `}
+        </Script>
 
         <meta name="google-adsense-account" content="ca-pub-5121018245734592" />
       </head>
