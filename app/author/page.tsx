@@ -69,7 +69,7 @@ export default function AuthorPage() {
             <div className="relative">
               <div className="aspect-square max-w-md mx-auto overflow-hidden rounded-2xl border-4 border-primary/10 shadow-xl bg-muted/50">
                 <Image
-                  src="/ajit-hinditechguide.jpg"
+                  src="/ajit-hinditechguide.webp"
                   alt="Ajit Gupta – Founder of HindiTechGuide"
                   width={400}
                   height={400}

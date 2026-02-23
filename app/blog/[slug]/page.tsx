@@ -427,7 +427,7 @@ export default async function BlogPostPage({ params }: PageProps) {
           <AuthorCard
             name="Ajit Gupta"
             bio="Tech blogger, developer, and digital marketing enthusiast. Sharing tips and tutorials in Hindi."
-            avatar="/ajit-hinditechguide.jpg"
+            avatar="/ajit-hinditechguide.webp"
             social={{
               email: "hinditechguides@gmail.com",
               twitter: "https://twitter.com/hinditechguide",

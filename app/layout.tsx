@@ -63,7 +63,7 @@ export const metadata: Metadata = {
       "Explore AI, technology tips, mobile and computer tutorials in Hindi. HindiTechGuide helps you understand technology in a simple way.",
     images: [
       {
-        url: "/twitter-image.png",
+        url: "/default-og.webp",
         alt: "HindiTechGuide - AI,Technology Tips, Mobile & Computer Guides in Hindi"
       }
     ],

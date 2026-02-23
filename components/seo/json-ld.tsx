@@ -102,7 +102,7 @@ export function WebPageSchema({
     description,
     url,
     inLanguage: "hi-IN",
-    image: image || `${url}/cover.png`,
+    image: image || `${url}/default-og.webp`,
     isPartOf: {
       "@id": "https://hinditechguide.com/#website",
     },

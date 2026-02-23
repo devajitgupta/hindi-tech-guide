@@ -51,7 +51,7 @@ export function Footer() {
             <ul className="space-y-2 text-sm">
               <li><Link href="https://t.me/+e6weorQQ4Js3ZjM1" target="_blank">Telegram</Link></li>
               <li><Link href="https://instagram.com/hinditechguide" target="_blank">Instagram</Link></li>
-              <li><Link href="https://www.linkedin.com/in/hindi-tech-guide-727497386/" target="_blank">LinkedIn</Link></li>
+              <li><Link href="https://www.linkedin.com/in/ajit-gupta-a016ba10a/" target="_blank">LinkedIn</Link></li>
             </ul>
           </div>
         </div>

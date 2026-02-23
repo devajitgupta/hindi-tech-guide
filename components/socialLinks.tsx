@@ -4,10 +4,10 @@ import Link from "next/link"
 
 const socialLinks = [
     { icon: Mail, label: "Talegram", href: "https://t.me/+e6weorQQ4Js3ZjM1" },
-    { icon: Facebook, label: "Facebook", href: "https://facebook.com/yourpage" },
+    { icon: Facebook, label: "Facebook", href: "https://www.facebook.com/profile.php?id=61585863841745" },
     { icon: Twitter, label: "Twitter", href: "https://x.com/Hinditechguides" },
     { icon: Instagram, label: "Instagram", href: "https://instagram.com/hinditechguide" },
-    { icon: Linkedin, label: "LinkedIn", href: "https://www.linkedin.com/in/hindi-tech-guide-727497386/recent-activity/all/" },
+    { icon: Linkedin, label: "LinkedIn", href: "https://www.linkedin.com/in/ajit-gupta-a016ba10a" },
     { icon: Mail, label: "Email", href: "mailto:mhinditechguide@gmail.com" },]
 
 export function ReachUs() {

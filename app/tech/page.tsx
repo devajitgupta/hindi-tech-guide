@@ -16,7 +16,7 @@ export const metadata = {
     url: "https://hinditechguide.com/tech",
     siteName: "HindiTechGuide",
     type: "website",
-    images: [{ url: "https://hinditechguide.com/og-tech.png" }],
+    images: [{ url: "https://hinditechguide.com/default-og.webp" }],
   },
   alternates: {
     canonical: "https://hinditechguide.com/tech",
